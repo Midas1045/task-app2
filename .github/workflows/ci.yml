@@ -11,7 +11,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend  
+        working-directory: backend
 
     steps:
       - name: Checkout repository
@@ -24,9 +24,10 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      
+
       - name: Simulate test
         run: echo "Build successful - no tests yet"
-      
+
       - name: Build Docker Image
+        working-directory: .
         run: docker build -t task-app2 .
