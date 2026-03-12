@@ -27,3 +27,6 @@ jobs:
 
       - name: Simulate test
         run: echo "Build successful - no tests yet"
+      
+      - name: Build Docker Image
+        run: docker build -t task-app2 .
