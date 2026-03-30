@@ -2,19 +2,14 @@ pipeline {
     agent any
 
     stages {
-        stage('Debug') {
+        stage('Checkout') {
             steps {
-                sh 'echo STARTED'
-                sh 'whoami'
-                sh 'node -v || echo NO NODE'
-                sh 'npm -v || echo NO NPM'
-                sh 'docker -v || echo NO DOCKER'
-                sh 'pwd'
-                sh 'ls -la'
+                // Pull code from GitHub
+                git url: 'https://github.com/Midas1045/task-app2.git', branch: 'main'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install Backend Dependencies') {
             steps {
                 dir('backend') {
                     sh 'npm install'
@@ -22,17 +17,25 @@ pipeline {
             }
         }
 
-        stage('Verify Environment') {
+        stage('Install Frontend Dependencies') {
             steps {
-                dir('backend') {
-                    sh 'node -v'
+                dir('frontend') {
+                    sh 'npm install'
                 }
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Verify Environment') {
             steps {
-                sh 'docker build -t task-app2 .'
+                sh 'node -v'
+                sh 'npm -v'
+            }
+        }
+
+        stage('List Workspace') {
+            steps {
+                sh 'pwd'
+                sh 'ls -la'
             }
         }
     }
