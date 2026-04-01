@@ -12,6 +12,7 @@ The Lab Task-App is a comprehensive lab project that combines frontend and backe
 7. Docker Image Creation
 8. Docker Hub and Repositories
 9. Infrastructure as a code
+10. Kubernetes
 
 ## Introduction
 This repository is a comprehensive, hands-on project designed to provide practical experience in full-stack development and modern DevOps workflows. This project integrates a dynamic frontend and robust backend, powered by automated CI/CD pipelines and Jenkins-driven build orchestration. Containerization is handled with Docker for consistent deployments, while Terraform manages the infrastructure to enable scalable, reproducible environments.
@@ -26,6 +27,7 @@ This repository is a comprehensive, hands-on project designed to provide practic
 * Docker
 * Docker Hub
 * Terraform
+* Kubernetes
 
 ## Github account creation
 
@@ -103,6 +105,69 @@ This serves as a cloud-based datacenter where all repositories are stored.
   * Run `git add .` - This stages untracked files and prepares them for commit
   * Run `git commit -m “workflows file commit”`- Saves the new file changes with a message describing the actions taken
   * Run `git push`- This uploads the commit to the repository. 
+
+## Jenkins Setup and Automation
+1. Create a VPC and launch an EC2 instance on AWS. Ensure the AMI used is Ubuntu. Set the inbound rules for security groups and NACLS to the following: 
+   * SSH - Port 22
+   * HTTP- Port 80
+   * Custom TCP- 8080
+   * All traffic
+These rules, especially All traffic, is subject to change to specific public addresses to ensure compliance with best safety practices.
+
+2. Run `sudo apt update` and `sudo apt upgrade` to install system dependencies and security patches for vulnerabilities.
+
+3. Install Java
+   * Run `javac -version`. This lists available java applications ready for downloads. 
+   * Run `sudo apt install fontconfig openjdk-21-jre -y` to install java on the instance
+   * Run `java -version` to verify installation
+
+4. Install Nodejs
+   * Run `sudo apt install nodejs -y` to install nodejs on the instance
+   * Run `node -v` to verify installation
+
+5. Add Jenkins Repository
+    * This does two things- downloads jenkins official security key and allows ubuntu to trust the jenkins package. 
+      To this:
+      `run echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
+      https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+      /etc/apt/sources.list.d/jenkins.list > /dev/null`. This also adds jenkins official repository to ubuntu
+
+6. Install Jenkins
+   * To install jenkins, `run sudo systemctl install jenkins -y`. This downloads and installs Jenkins in the instance.
+   * To enable, `run sudo systemctl enable jenkins` 
+   * To check its status, `run sudo systemctl status jenkins`
+   * To start Jenkins, `run sudo systemctl start jenkins`
+   * To stop, `run sudo systemctl stop jenkins`
+
+7. Access Jenkins
+   * Copy the public address of the EC2 instance and replace here. http://Instance_Public_Address:8080 and access it on the web browser
+   * On the displayed page, an admin password will be requested. This can be obtained from the instance
+   * On the Instance CLI, run sudo cat/var/lib/jenkins/secrets/initialAdminPassword to obtain the password. Copy the results and paste where it was requested
+   * Set up your email, username and password. Then select Install Suggested Plugins.
+
+8. CI Pipeline 
+   * Start by creating a new item, enter the name and select type option Pipeline
+   * In the configuration settings, leave the general section as default
+   * For the triggers section, check the box for github hook trigger for GITSCm polling
+   * For pipeline section, set definition as Pipeline script from SCM
+   * The SCM function is automatically set to Git
+   * Paste the required repository url in its designated space
+   * Switch the branch from Master to Main
+   * For the script path, fill in Jenkinsfile, leave the rest in defaults and Save
+   * Go to the Manage Jenkins section and navigate to Security
+   * On the Security page, go to Git Hooks and check the box Allow on Controller. This allows git hooks to run on the Jenkins Controller. Then Save.
+
+9. Create a github webhook
+This feature on Github lets you link your repository to Jenkins and allows you to carry out build automations any time you push changes to your repository.
+   * Go to the project repository and navigate to Settings
+   * Locate Webhooks on the menu section 
+   * On its settings page, input your payload url which is your jenkins url accompanied with “/github-webhook”. Eg; http://54.198.67.11:8080/github-webhook
+   * Select your application type as application/json
+   * Choose the events you would like triggers for through the webhook
+   * Check the box for active, leave the Secret space blank and Save
+   * A test ping action will be initiated to ensure connection to the local host. If successful, it sendsa message saying the last delivery was successful
+   * To test the trigger feature, create a new folder in your project root directory and push it to the repository
+   * Return to Jenkins and confirm that the build process has been automated successfully
 
 
 
