@@ -215,8 +215,9 @@ This uploads the Dockerfile to GitHub repository so Jenkins can access it when r
    * In Week 3, the Jenkins pipeline included only two stages:
       * Install dependencies
       * Verify that Node.js is installed
-Jenkins was only validating the environment and not building the application container.
-  To complete, we need to add an another stage: Build the Docker image. With this update, the pipeline will now:
+Jenkins was only validating the environment and not building the application container. To complete, we need to add an another stage: Build the Docker image.
+
+With this update, the pipeline will now:
   * Pull the repository
   * Install dependencies
   * Verify Node.js
@@ -225,11 +226,11 @@ Jenkins was only validating the environment and not building the application con
 By introducing the Docker build stage, Jenkins can automatically package the application into a container image whenever new code is pushed to GitHub.
 
 
-8.  Push the updated jenkinsfile to Github
+8. Push the updated jenkinsfile to Github
 Run commands:
-git  add .
-git commit -m
-git push
+	* git  add .
+	* git commit -m
+	* git push
 	This pushes the changes made to the project repository
 
 9. Verify Docker Build
