@@ -9,7 +9,7 @@ The Lab Task-App is a comprehensive lab project that combines frontend and backe
 4. Task App configuration
 5. Github Actions
 6. Jenkins Pipeline Automation
-7. Docker Image Creation
+7. Docker Installation and Image Creation
 8. Docker Hub and Repositories
 9. Infrastructure as a code
 10. Kubernetes
@@ -169,7 +169,72 @@ This feature on Github lets you link your repository to Jenkins and allows you t
    * To test the trigger feature, create a new folder in your project root directory and push it to the repository
    * Return to Jenkins and confirm that the build process has been automated successfully
 
+<p align="center"> <img width="900" height="715" alt="Screenshot 2026-04-04 192328" src="https://github.com/user-attachments/assets/36e865b3-5ad7-48f7-a3e5-d6a21c9f8602" />
 
+
+## Docker Installation and Image Creation
+Docker is a tool that packages your application and everything it needs to run — code, dependencies, libraries, settings — into a single unit called a container.
+
+Key Concepts include: 
+* Image — a blueprint/template for creating a container. 
+* Container — a running instance of an image. 
+* Dockerfile — a text file with instructions on how to build an image.
+* Docker Hub — an online registry where you can share and download images, like GitHub but for Docker images.
+
+
+Steps 
+1. Installation of Docker desktop and create a dockerfile
+   * Download and install docker desktop locally then sign up or sign in if you already have an account
+   * Run notepad Dockerfile in the root directory of the project. This will open Notepad with a new file called Dockerfile.
+   * Paste the basic Dockerfile script for the Node.js project
+
+2. Build Docker Image Locally
+   * Run docker build -t project . in the root directory. This command builds a Docker image from your Dockerfile and tags it with the name of the project.
+
+3. Run the Container
+   * Run command docker run -p 3000:3000 project. This maps the backend to run on port => 3000. 
+   * Open this in your browser: http://localhost:3000. This tells Docker to create and start a running container from the image built
+
+4. Push Dockerfile to Github
+  * Run the following commands
+    * git add .
+    * git commit -m “activity”
+    * git push
+ 
+This uploads the Dockerfile to GitHub repository so Jenkins can access it when running the CI pipeline. Since Jenkins is connected to GitHub through the webhook, pushing new code will automatically trigger a new Jenkins build.
+
+5. Install Docker on Jenkins Server
+   * On the instance, run sudo apt update and sudo apt upgrade to update dependencies and security patch configurations
+   * Run command sudo apt install docker.io -y - This installs docker in the instance serving as the jenkins server that allows the CI pipeline to build and run        container images during automated builds
+   * Run commands sudo systemctl start docker and sudo systemctl enable docker. This conveys two processes: Start the docker service and also ensure it is enabled      automatically whenever the server get booted up
+
+6. Enable access for Jenkins to Use Docker
+   * Run sudo usermod -aG docker jenkins. This grants permission to Jenkins to run docker commands. Without this, Jenkins pipelines will fail when trying to build      Docker images. For Jenkins to build Docker images, Docker must be installed on that server.
+
+7. Update the Jenkins Pipeline
+   * In Week 3, the Jenkins pipeline included only two stages:
+      * Install dependencies
+      * Verify that Node.js is installed
+Jenkins was only validating the environment and not building the application container.
+  To complete, we need to add an another stage: Build the Docker image. With this update, the pipeline will now:
+  * Pull the repository
+  * Install dependencies
+  * Verify Node.js
+  * Build the Docker image
+
+By introducing the Docker build stage, Jenkins can automatically package the application into a container image whenever new code is pushed to GitHub.
+
+
+8.  Push the updated jenkinsfile to Github
+Run commands:
+git  add .
+git commit -m
+git push
+	This pushes the changes made to the project repository
+
+9. Verify Docker Build
+Access your Jenkins server and verify the console output
+To view/confirm that the docker image exists, run docker images. This displays docker images present in the server
 
 
 
