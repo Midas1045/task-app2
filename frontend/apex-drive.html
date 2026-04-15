@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APEX DRIVE — The World's Fastest Cars</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --card: #161616;
+      --border: #2a2a2a;
+      --accent: #e8ff00;
+      --accent2: #ff3c00;
+      --text: #f0f0f0;
+      --muted: #6b6b6b;
+      --dim: #2e2e2e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 4rem;
+      background: rgba(10,10,10,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* TICKER */
+    .ticker-wrap {
+      overflow: hidden;
+      background: var(--accent);
+      padding: 0.6rem 0;
+      white-space: nowrap;
+      margin-top: 70px;
+    }
+    .ticker-inner { display: inline-block; animation: ticker 55s linear infinite; }
+    .ticker-inner span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+      color: #000;
+      padding: 0 2.5rem;
+    }
+    .ticker-inner span::before { content: '●'; margin-right: 2.5rem; opacity: 0.4; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 6rem 4rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      right: -10%; top: 50%;
+      transform: translateY(-50%);
+      width: 55%; aspect-ratio: 1;
+      background: radial-gradient(circle, rgba(232,255,0,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .hero-label::before { content: ''; display: inline-block; width: 2rem; height: 1px; background: var(--accent); }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 8vw, 9rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      margin-bottom: 2rem;
+    }
+    .hero-title span { color: var(--accent2); }
+    .hero-desc { font-size: 1rem; color: var(--muted); max-width: 38ch; line-height: 1.8; margin-bottom: 3rem; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--accent);
+      color: #000;
+      padding: 0.9rem 2rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.82rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    .btn:hover { background: #fff; transform: translateY(-2px); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); margin-left: 1rem; }
+    .btn-ghost:hover { background: var(--dim); }
+    .hero-right { position: relative; display: flex; align-items: center; justify-content: center; }
+    .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5px; width: 100%; max-width: 440px; }
+    .stat-box { background: var(--card); border: 1px solid var(--border); padding: 2rem; animation: fadeUp 0.8s ease both; }
+    .stat-box:nth-child(1) { border-top: 3px solid var(--accent); }
+    .stat-box:nth-child(2) { border-top: 3px solid var(--accent2); animation-delay: 0.1s; }
+    .stat-box:nth-child(3) { animation-delay: 0.2s; }
+    .stat-box:nth-child(4) { animation-delay: 0.3s; }
+    .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 3.2rem; line-height: 1; color: var(--text); margin-bottom: 0.3rem; }
+    .stat-unit { color: var(--accent); font-size: 1.4rem; }
+    .stat-label { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+
+    /* SECTION */
+    section { padding: 6rem 4rem; }
+    .section-tag { font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 5rem); line-height: 1; margin-bottom: 0.5rem; }
+    .section-sub { color: var(--muted); max-width: 50ch; margin-bottom: 3.5rem; }
+
+    /* CAR CARDS */
+    .cars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .car-card {
+      background: var(--card);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s;
+    }
+    .car-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s ease;
+      z-index: 2;
+    }
+    .car-card:hover { background: #1c1c1c; }
+    .car-card:hover::before { transform: scaleX(1); }
+
+    .car-img-wrap {
+      width: 100%;
+      height: 210px;
+      overflow: hidden;
+      position: relative;
+      background: #0d0d0d;
+    }
+    .car-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease, filter 0.4s ease;
+      filter: brightness(0.82) saturate(1.1);
+    }
+    .car-card:hover .car-img-wrap img { transform: scale(1.05); filter: brightness(0.95) saturate(1.2); }
+    .car-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 35%, rgba(10,10,10,0.9) 100%);
+    }
+    .car-rank {
+      position: absolute;
+      bottom: 0.4rem;
+      right: 1rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      color: rgba(255,255,255,0.1);
+      line-height: 1;
+      user-select: none;
+      z-index: 1;
+    }
+    .car-body { padding: 1.6rem 2rem 1.8rem; }
+    .car-maker { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem; }
+    .car-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; letter-spacing: 0.05em; line-height: 1.1; margin-bottom: 0.25rem; }
+    .car-tagline { font-size: 0.8rem; color: var(--muted); font-style: italic; margin-bottom: 1.5rem; }
+    .car-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .spec-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--text); line-height: 1; }
+    .spec-val small { font-size: 0.82rem; color: var(--muted); }
+    .spec-key { font-size: 0.63rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-top: 0.15rem; }
+    .car-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 1.2rem; border-top: 1px solid var(--border); }
+    .car-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--accent); }
+    .car-fuel-badge { font-size: 0.63rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.25rem 0.7rem; border: 1px solid var(--border); color: var(--muted); }
+
+    /* COMPARE TABLE */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    thead tr { border-bottom: 1px solid var(--accent); }
+    thead th { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); padding: 1rem; text-align: left; font-weight: 400; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    tbody tr:hover { background: var(--card); }
+    tbody td { padding: 0.85rem 1rem; color: var(--text); }
+    .td-rank { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--muted); }
+    .td-car { font-weight: 500; }
+    .td-maker { color: var(--muted); font-size: 0.78rem; }
+    .td-speed { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--accent); }
+    .td-price { font-weight: 500; }
+    .td-fuel { color: var(--muted); font-size: 0.78rem; }
+    .bar-wrap { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--muted); }
+    .bar-bg { height: 4px; background: var(--dim); border-radius: 2px; width: 80px; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 2px; }
+
+    /* MANUFACTURERS */
+    .manufacturers { background: var(--surface); }
+    .brands-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .brand-card { background: var(--card); text-align: center; transition: background 0.2s; cursor: default; overflow: hidden; }
+    .brand-card:hover { background: #1c1c1c; }
+    .brand-info { padding: 2rem 1.2rem 1.8rem; }
+    .brand-icon { font-size: 2.2rem; margin-bottom: 0.6rem; }
+    .brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+    .brand-country { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .brand-count { font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em; }
+
+    /* FACTS */
+    .facts-section { background: var(--surface); }
+    .facts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .fact-card { background: var(--card); padding: 2.5rem; transition: background 0.2s; }
+    .fact-card:hover { background: #1c1c1c; }
+    .fact-icon { font-size: 2rem; margin-bottom: 1.2rem; }
+    .fact-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.05em; margin-bottom: 0.8rem; }
+    .fact-text { font-size: 0.88rem; color: var(--muted); line-height: 1.75; }
+
+    /* MISC */
+    .divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+    footer { padding: 3rem 4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.12em; color: var(--accent); }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.08em; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .hero-content { animation: fadeUp 0.7s ease both; }
+    .hero-right { animation: fadeUp 0.7s ease 0.2s both; }
+
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 5rem 1.5rem 3rem; gap: 3rem; }
+      .hero::after { display: none; }
+      section { padding: 4rem 1.5rem; }
+      footer { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Apex Drive</a>
+  <ul class="nav-links">
+    <li><a href="#cars">Top 30</a></li>
+    <li><a href="#compare">Compare</a></li>
+    <li><a href="#makers">Manufacturers</a></li>
+    <li><a href="#facts">Fast Facts</a></li>
+  </ul>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span>Bugatti Bolide — 1,825 hp · $4.7M</span>
+    <span>Koenigsegg Jesko Absolut — 330 mph (calc)</span>
+    <span>Rimac Nevera — 0–60 in 1.74s · 1,914 hp</span>
+    <span>SSC Tuatara — 282.9 mph world record</span>
+    <span>Hennessey Venom F5 — 1,817 hp · 311 mph target</span>
+    <span>Ferrari LaFerrari — 950 hp PHEV · 499 units only</span>
+    <span>McLaren Speedtail — 250 mph · central driving position</span>
+    <span>Lamborghini Revuelto — V12 Hybrid 1,001 hp</span>
+    <span>Porsche 918 Spyder — 887 hp · Nürburgring record holder</span>
+    <span>Chevrolet Corvette ZR1 — 1,064 hp · $175K value king</span>
+    <span>Mercedes-AMG One — real F1 engine on the road</span>
+    <span>Aston Martin Valkyrie — 11,100 RPM naturally aspirated V12</span>
+    <span>Pagani Zonda — handcrafted since 1999 · still being built</span>
+    <span>Lexus LFA — 9,000 RPM V10 · tuned by Yamaha</span>
+    <span>Bugatti Bolide — 1,825 hp · $4.7M</span>
+    <span>Koenigsegg Jesko Absolut — 330 mph (calc)</span>
+    <span>Rimac Nevera — 0–60 in 1.74s · 1,914 hp</span>
+    <span>SSC Tuatara — 282.9 mph world record</span>
+    <span>Hennessey Venom F5 — 1,817 hp · 311 mph target</span>
+    <span>Ferrari LaFerrari — 950 hp PHEV · 499 units only</span>
+    <span>McLaren Speedtail — 250 mph · central driving position</span>
+    <span>Lamborghini Revuelto — V12 Hybrid 1,001 hp</span>
+    <span>Porsche 918 Spyder — 887 hp · Nürburgring record holder</span>
+    <span>Chevrolet Corvette ZR1 — 1,064 hp · $175K value king</span>
+    <span>Mercedes-AMG One — real F1 engine on the road</span>
+    <span>Aston Martin Valkyrie — 11,100 RPM naturally aspirated V12</span>
+    <span>Pagani Zonda — handcrafted since 1999 · still being built</span>
+    <span>Lexus LFA — 9,000 RPM V10 · tuned by Yamaha</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <p class="hero-label">Performance Automotive Guide — Top 30 Edition</p>
+    <h1 class="hero-title">THE<br>WORLD'S<br><span>FASTEST</span><br>MACHINES</h1>
+    <p class="hero-desc">From the autobahns of Stuttgart to the salt flats of Nevada — a definitive guide to the top 30 most extreme production cars ever built, with specs, price tags, and the manufacturers who made them legendary.</p>
+    <div>
+      <a href="#cars" class="btn">Explore 30 Cars →</a>
+      <a href="#compare" class="btn btn-ghost">Compare All</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stats">
+      <div class="stat-box">
+        <div class="stat-num">330<span class="stat-unit">mph</span></div>
+        <div class="stat-label">Theoretical Top Speed</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">1,914<span class="stat-unit">hp</span></div>
+        <div class="stat-label">Highest Output</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">1.74<span class="stat-unit">s</span></div>
+        <div class="stat-label">Quickest 0–60</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">30<span class="stat-unit">cars</span></div>
+        <div class="stat-label">Cars Profiled</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TOP 30 CARS -->
+<section id="cars">
+  <p class="section-tag">Featured Machines</p>
+  <h2 class="section-title">Top 30 Supercar Showcase</h2>
+  <p class="section-sub">Thirty of the most extraordinary production and limited-series cars ever built — ranked, rated, and documented with full specifications.</p>
+
+  <div class="cars-grid">
+
+    <!-- 01 BUGATTI CHIRON -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-01.jpg" alt="Bugatti Chiron" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">01</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Bugatti</p>
+        <h3 class="car-name">Chiron Super Sport</h3>
+        <p class="car-tagline">"The fastest production car on earth"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">261<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.4<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,500<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">8.0<small>L W16</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$3,900,000</div>
+          <div class="car-fuel-badge">⛽ Quad-Turbo W16</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 KOENIGSEGG JESKO -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-02.jpg" alt="Koenigsegg Jesko" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">02</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Koenigsegg</p>
+        <h3 class="car-name">Jesko Absolut</h3>
+        <p class="car-tagline">"Built for 330 mph — no road can hold it"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">330<small> mph*</small></div><div class="spec-key">Top Speed (calc)</div></div>
+          <div><div class="spec-val">2.5<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,600<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">5.0<small>L V8 TT</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$3,000,000</div>
+          <div class="car-fuel-badge">⛽ E85 Flex</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 SSC TUATARA -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-03.jpg" alt="SSC Tuatara" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">03</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">SSC North America</p>
+        <h3 class="car-name">Tuatara</h3>
+        <p class="car-tagline">"282.9 mph — America's two-way speed king"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">283<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.5<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,750<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">5.9<small>L V8 TT</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$1,600,000</div>
+          <div class="car-fuel-badge">⛽ E85 / 91 Oct</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 RIMAC NEVERA -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-04.jpg" alt="Rimac Nevera" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">04</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Rimac</p>
+        <h3 class="car-name">Nevera</h3>
+        <p class="car-tagline">"1.74 seconds to 60 — the electric apocalypse"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">258<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">1.74<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,914<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">4<small>× Electric</small></div><div class="spec-key">Drivetrain</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$2,400,000</div>
+          <div class="car-fuel-badge">⚡ All Electric</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 HENNESSEY VENOM F5 -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-05.jpg" alt="Hennessey Venom F5" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">05</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Hennessey</p>
+        <h3 class="car-name">Venom F5</h3>
+        <p class="car-tagline">"Texas-built fury chasing 311 mph"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">311<small> mph*</small></div><div class="spec-key">Top Speed (target)</div></div>
+          <div><div class="spec-val">2.6<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,817<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">6.6<small>L V8 TT</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$2,100,000</div>
+          <div class="car-fuel-badge">⛽ 24 Units Only</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06 BUGATTI BOLIDE -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-06.jpg" alt="Bugatti Bolide" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">06</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Bugatti</p>
+        <h3 class="car-name">Bolide</h3>
+        <p class="car-tagline">"Track-only W16 terror — 40 units, no road legal"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">310<small> mph*</small></div><div class="spec-key">Top Speed (theor.)</div></div>
+          <div><div class="spec-val">2.17<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,825<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">8.0<small>L W16</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$4,700,000</div>
+          <div class="car-fuel-badge">🏁 Track Only</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 07 ASTON MARTIN VALKYRIE -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-07.jpg" alt="Aston Martin Valkyrie" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">07</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Aston Martin</p>
+        <h3 class="car-name">Valkyrie</h3>
+        <p class="car-tagline">"Adrian Newey's F1 masterpiece for the road"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">250<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.5<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,160<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">6.5<small>L V12 Hybrid</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$3,200,000</div>
+          <div class="car-fuel-badge">⚡ Hybrid · 11,100 RPM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 08 McLAREN SPEEDTAIL -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-08.jpg" alt="McLaren Speedtail" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">08</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">McLaren</p>
+        <h3 class="car-name">Speedtail</h3>
+        <p class="car-tagline">"250 mph Hyper-GT — centre seat, no mirrors"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">250<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.5<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,055<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">4.0<small>L V8 Hybrid</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$2,250,000</div>
+          <div class="car-fuel-badge">⚡ Hybrid · 106 Units</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 09 KOENIGSEGG AGERA RS -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-09.jpg" alt="Koenigsegg Agera RS" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">09</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Koenigsegg</p>
+        <h3 class="car-name">Agera RS</h3>
+        <p class="car-tagline">"277.9 mph — shattered records in a single Nevada day"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">278<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.6<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,341<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">5.0<small>L V8 TT</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$2,500,000</div>
+          <div class="car-fuel-badge">⛽ E85 · 25 Units</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 MERCEDES-AMG ONE -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-010.jpg" alt="Mercedes-AMG One" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">10</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Mercedes-AMG</p>
+        <h3 class="car-name">AMG One</h3>
+        <p class="car-tagline">"A literal Formula 1 car with number plates"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">219<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.9<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,063<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">1.6<small>L V6 F1 Hybrid</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$2,700,000</div>
+          <div class="car-fuel-badge">⚡ F1 Hybrid · 275 Units</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 PAGANI HUAYRA R -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-011.jpg" alt="Pagani Huayra R" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">11</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Pagani</p>
+        <h3 class="car-name">Huayra R</h3>
+        <p class="car-tagline">"Italian art meets raw track violence — 30 units"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">211<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.7<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">850<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">6.0<small>L V12 NA</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$3,100,000</div>
+          <div class="car-fuel-badge">🏁 Track Only · 9,000 RPM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 FERRARI SF90 -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-012.jpg" alt="Ferrari SF90 Stradale" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">12</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Ferrari</p>
+        <h3 class="car-name">SF90 Stradale</h3>
+        <p class="car-tagline">"Ferrari's most powerful road car — first AWD Prancing Horse"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">211<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.5<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">986<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">4.0<small>L V8 + 3 Motors</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$625,000</div>
+          <div class="car-fuel-badge">⚡ PHEV Hybrid</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13 LAMBORGHINI REVUELTO -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-013.jpg" alt="Lamborghini Revuelto" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">13</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Lamborghini</p>
+        <h3 class="car-name">Revuelto</h3>
+        <p class="car-tagline">"First Lambo to break 1,000 hp — the bull reborn"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">217<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.5<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,001<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">6.5<small>L V12 + 3 Motors</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$600,000</div>
+          <div class="car-fuel-badge">⚡ V12 Hybrid · 9,500 RPM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14 FERRARI LaFERRARI -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-014.jpg" alt="Ferrari LaFerrari" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">14</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Ferrari</p>
+        <h3 class="car-name">LaFerrari</h3>
+        <p class="car-tagline">"The Holy Trinity — buyers personally selected by Ferrari"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">217<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">3.0<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">950<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">6.3<small>L V12 + KERS</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$1,400,000</div>
+          <div class="car-fuel-badge">⚡ F1 KERS · 499 Units</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 15 PORSCHE 918 SPYDER -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-015.jpg" alt="Porsche 918 Spyder" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">15</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Porsche</p>
+        <h3 class="car-name">918 Spyder</h3>
+        <p class="car-tagline">"Holy Trinity contender — Nürburgring record in 6:57"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">214<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.5<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">887<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">4.6<small>L V8 + 2 Motors</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$845,000</div>
+          <div class="car-fuel-badge">⚡ Hybrid · 918 Units</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 16 LAMBORGHINI SIÁN -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-016.jpg" alt="Lamborghini Sián" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">16</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Lamborghini</p>
+        <h3 class="car-name">Sián</h3>
+        <p class="car-tagline">"Sold out before reveal — supercapacitor lightning bull"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">220<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.8<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">819<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">6.5<small>L V12 + Supercap</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$3,600,000</div>
+          <div class="car-fuel-badge">⚡ Supercapacitor · 63 Units</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 17 McLAREN P1 -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-017.jpg" alt="McLaren P1" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">17</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">McLaren</p>
+        <h3 class="car-name">P1</h3>
+        <p class="car-tagline">"Holy Trinity — the rawest, most visceral of the three"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">217<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.8<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">903<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">3.8<small>L V8 + Motor</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$1,150,000</div>
+          <div class="car-fuel-badge">⚡ Hybrid · 375 Units</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 18 PAGANI ZONDA -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-018.jpg" alt="Pagani Zonda" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">18</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Pagani</p>
+        <h3 class="car-name">Zonda</h3>
+        <p class="car-tagline">"The rolling sculpture built since 1999 — still being made"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">220<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">3.4<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">760<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">7.3<small>L V12 AMG</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$15,000,000+</div>
+          <div class="car-fuel-badge">⛽ Hand-Crafted · Bespoke</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 19 BUGATTI VEYRON -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-019.jpg" alt="Bugatti Veyron" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">19</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Bugatti</p>
+        <h3 class="car-name">Veyron Super Sport</h3>
+        <p class="car-tagline">"The car the world said was impossible to build"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">268<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.5<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,200<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">8.0<small>L W16</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$1,700,000</div>
+          <div class="car-fuel-badge">⛽ 10 Radiators</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 20 FERRARI 812 -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-020.jpg" alt="Ferrari 812 Superfast" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">20</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Ferrari</p>
+        <h3 class="car-name">812 Superfast</h3>
+        <p class="car-tagline">"Last of the great naturally aspirated V12 Ferraris"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">211<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.9<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">789<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">6.5<small>L V12 NA</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$340,000</div>
+          <div class="car-fuel-badge">⛽ 8,900 RPM Screamer</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 21 PORSCHE GT2 RS -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-021.jpg" alt="Porsche 911 GT2 RS" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">21</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Porsche</p>
+        <h3 class="car-name">911 GT2 RS</h3>
+        <p class="car-tagline">"700 hp, RWD, no excuses — fastest 911 ever"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">211<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.7<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">700<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">3.8<small>L Flat-6 TT</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$293,000</div>
+          <div class="car-fuel-badge">⛽ RWD · 1,000 Units</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 22 LAMBORGHINI HURACÁN STO -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-022.jpg" alt="Lamborghini Huracán STO" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">22</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Lamborghini</p>
+        <h3 class="car-name">Huracán STO</h3>
+        <p class="car-tagline">"Super Trofeo Omologata — race car with number plates"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">193<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">3.0<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">640<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">5.2<small>L V10 NA</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$330,000</div>
+          <div class="car-fuel-badge">⛽ 75% Carbon Fiber Body</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 23 McLAREN 720S -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-023.jpg" alt="McLaren 720S" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">23</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">McLaren</p>
+        <h3 class="car-name">720S</h3>
+        <p class="car-tagline">"The everyday supercar that humiliates hypercars"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">212<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.8<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">710<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">4.0<small>L V8 TT</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$300,000</div>
+          <div class="car-fuel-badge">⛽ 1,283 kg Carbon MonoCell</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 24 ASTON MARTIN DBS 770 -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-024.jpg" alt="Aston Martin DBS 770 Ultimate" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">24</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Aston Martin</p>
+        <h3 class="car-name">DBS 770 Ultimate</h3>
+        <p class="car-tagline">"Farewell to the V12 — the most powerful Aston ever built"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">211<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">3.2<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">770<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">5.2<small>L V12 TT</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$340,000</div>
+          <div class="car-fuel-badge">⛽ Last V12 Aston · 499 Units</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 25 CORVETTE ZR1 -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-025.jpg" alt="Corvette ZR1" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">25</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Chevrolet</p>
+        <h3 class="car-name">Corvette ZR1</h3>
+        <p class="car-tagline">"1,064 hp for $175K — America's supercar killer"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">233<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">2.6<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">1,064<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">5.5<small>L V8 TT</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$175,000</div>
+          <div class="car-fuel-badge">⛽ Flat-Plane Crank V8</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 26 FORD GT -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-026.jpg" alt="Ford GT" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">26</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Ford</p>
+        <h3 class="car-name">Ford GT</h3>
+        <p class="car-tagline">"Beat Ferrari at Le Mans in 2016 — 50 years later"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">216<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">3.0<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">660<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">3.5<small>L V6 TT</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$500,000</div>
+          <div class="car-fuel-badge">🏁 Le Mans Winner · 1,350 Units</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 27 LEXUS LFA -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-027.jpg" alt="Lexus LFA" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">27</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Lexus</p>
+        <h3 class="car-name">LFA</h3>
+        <p class="car-tagline">"10 years · $2B to develop · 500 units — worth every yen"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">202<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">3.7<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">552<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">4.8<small>L V10 NA</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$375,000</div>
+          <div class="car-fuel-badge">⛽ Yamaha-Tuned · 9,000 RPM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 28 MERCEDES SLS AMG -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-028.jpg" alt="Mercedes SLS AMG" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">28</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Mercedes-AMG</p>
+        <h3 class="car-name">SLS AMG</h3>
+        <p class="car-tagline">"Gullwing reborn — AMG's first fully in-house supercar"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">197<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">3.7<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">563<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">6.2<small>L V8 NA</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$200,000</div>
+          <div class="car-fuel-badge">⛽ Gullwing Doors · 2010–2014</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 29 DODGE VIPER -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-029.jpg" alt="Dodge Viper" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">29</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Dodge</p>
+        <h3 class="car-name">Viper ACR</h3>
+        <p class="car-tagline">"No traction control, no mercy — 13 simultaneous lap records"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">206<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">3.5<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">645<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">8.4<small>L V10 NA</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$120,000</div>
+          <div class="car-fuel-badge">⛽ RWD Only · Pure American</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 30 ROLLS-ROYCE WRAITH -->
+    <div class="car-card">
+      <div class="car-img-wrap">
+        <img src="car-030.jpg" alt="Rolls-Royce Wraith" loading="lazy" />
+        <div class="car-img-overlay"></div>
+        <div class="car-rank">30</div>
+      </div>
+      <div class="car-body">
+        <p class="car-maker">Rolls-Royce</p>
+        <h3 class="car-name">Wraith Black Arrow</h3>
+        <p class="car-tagline">"The last V12 Rolls-Royce coupe — 1,340 hand-placed stars"</p>
+        <div class="car-specs">
+          <div><div class="spec-val">155<small> mph</small></div><div class="spec-key">Top Speed</div></div>
+          <div><div class="spec-val">4.4<small> s</small></div><div class="spec-key">0–60 mph</div></div>
+          <div><div class="spec-val">624<small> hp</small></div><div class="spec-key">Horsepower</div></div>
+          <div><div class="spec-val">6.6<small>L V12 TT</small></div><div class="spec-key">Engine</div></div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$330,000</div>
+          <div class="car-fuel-badge">⛽ GPS-Aided Gearbox · Bespoke</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /cars-grid -->
+</section>
+
+<div class="divider"></div>
+
+<!-- COMPARE TABLE -->
+<section id="compare" style="background: var(--surface);">
+  <p class="section-tag">Full Comparison</p>
+  <h2 class="section-title">All 30 Cars — Head to Head</h2>
+  <p class="section-sub">Every car ranked by top speed, with horsepower, 0–60, price and powertrain at a glance.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Car</th>
+          <th>Top Speed</th>
+          <th>0–60 mph</th>
+          <th>Power</th>
+          <th>Speed Bar</th>
+          <th>Price</th>
+          <th>Powertrain</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="td-rank">01</td><td><div class="td-car">Chiron Super Sport</div><div class="td-maker">Bugatti</div></td><td class="td-speed">261 mph</td><td>2.4s</td><td>1,500 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:79%"></div></div>79%</div></td><td class="td-price">$3.9M</td><td class="td-fuel">Petrol</td></tr>
+        <tr><td class="td-rank">02</td><td><div class="td-car">Jesko Absolut</div><div class="td-maker">Koenigsegg</div></td><td class="td-speed">330 mph*</td><td>2.5s</td><td>1,600 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:100%"></div></div>100%</div></td><td class="td-price">$3.0M</td><td class="td-fuel">E85 Flex</td></tr>
+        <tr><td class="td-rank">03</td><td><div class="td-car">Tuatara</div><div class="td-maker">SSC North America</div></td><td class="td-speed">283 mph</td><td>2.5s</td><td>1,750 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:86%"></div></div>86%</div></td><td class="td-price">$1.6M</td><td class="td-fuel">E85 / 91oct</td></tr>
+        <tr><td class="td-rank">04</td><td><div class="td-car">Nevera</div><div class="td-maker">Rimac</div></td><td class="td-speed">258 mph</td><td>1.74s</td><td>1,914 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:78%"></div></div>78%</div></td><td class="td-price">$2.4M</td><td class="td-fuel">Electric</td></tr>
+        <tr><td class="td-rank">05</td><td><div class="td-car">Venom F5</div><div class="td-maker">Hennessey</div></td><td class="td-speed">311 mph*</td><td>2.6s</td><td>1,817 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:94%"></div></div>94%</div></td><td class="td-price">$2.1M</td><td class="td-fuel">Petrol</td></tr>
+        <tr><td class="td-rank">06</td><td><div class="td-car">Bolide</div><div class="td-maker">Bugatti</div></td><td class="td-speed">310 mph*</td><td>2.17s</td><td>1,825 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:94%"></div></div>94%</div></td><td class="td-price">$4.7M</td><td class="td-fuel">Petrol</td></tr>
+        <tr><td class="td-rank">07</td><td><div class="td-car">Valkyrie</div><div class="td-maker">Aston Martin</div></td><td class="td-speed">250 mph</td><td>2.5s</td><td>1,160 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:76%"></div></div>76%</div></td><td class="td-price">$3.2M</td><td class="td-fuel">Hybrid</td></tr>
+        <tr><td class="td-rank">08</td><td><div class="td-car">Speedtail</div><div class="td-maker">McLaren</div></td><td class="td-speed">250 mph</td><td>2.5s</td><td>1,055 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:76%"></div></div>76%</div></td><td class="td-price">$2.25M</td><td class="td-fuel">Hybrid</td></tr>
+        <tr><td class="td-rank">09</td><td><div class="td-car">Agera RS</div><div class="td-maker">Koenigsegg</div></td><td class="td-speed">278 mph</td><td>2.6s</td><td>1,341 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:84%"></div></div>84%</div></td><td class="td-price">$2.5M</td><td class="td-fuel">E85 Flex</td></tr>
+        <tr><td class="td-rank">10</td><td><div class="td-car">AMG One</div><div class="td-maker">Mercedes-AMG</div></td><td class="td-speed">219 mph</td><td>2.9s</td><td>1,063 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:66%"></div></div>66%</div></td><td class="td-price">$2.7M</td><td class="td-fuel">F1 Hybrid</td></tr>
+        <tr><td class="td-rank">11</td><td><div class="td-car">Huayra R</div><div class="td-maker">Pagani</div></td><td class="td-speed">211 mph</td><td>2.7s</td><td>850 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:64%"></div></div>64%</div></td><td class="td-price">$3.1M</td><td class="td-fuel">Petrol</td></tr>
+        <tr><td class="td-rank">12</td><td><div class="td-car">SF90 Stradale</div><div class="td-maker">Ferrari</div></td><td class="td-speed">211 mph</td><td>2.5s</td><td>986 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:64%"></div></div>64%</div></td><td class="td-price">$625K</td><td class="td-fuel">PHEV</td></tr>
+        <tr><td class="td-rank">13</td><td><div class="td-car">Revuelto</div><div class="td-maker">Lamborghini</div></td><td class="td-speed">217 mph</td><td>2.5s</td><td>1,001 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:66%"></div></div>66%</div></td><td class="td-price">$600K</td><td class="td-fuel">V12 Hybrid</td></tr>
+        <tr><td class="td-rank">14</td><td><div class="td-car">LaFerrari</div><div class="td-maker">Ferrari</div></td><td class="td-speed">217 mph</td><td>3.0s</td><td>950 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:66%"></div></div>66%</div></td><td class="td-price">$1.4M</td><td class="td-fuel">KERS Hybrid</td></tr>
+        <tr><td class="td-rank">15</td><td><div class="td-car">918 Spyder</div><div class="td-maker">Porsche</div></td><td class="td-speed">214 mph</td><td>2.5s</td><td>887 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:65%"></div></div>65%</div></td><td class="td-price">$845K</td><td class="td-fuel">Hybrid</td></tr>
+        <tr><td class="td-rank">16</td><td><div class="td-car">Sián</div><div class="td-maker">Lamborghini</div></td><td class="td-speed">220 mph</td><td>2.8s</td><td>819 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:67%"></div></div>67%</div></td><td class="td-price">$3.6M</td><td class="td-fuel">Supercapacitor</td></tr>
+        <tr><td class="td-rank">17</td><td><div class="td-car">P1</div><div class="td-maker">McLaren</div></td><td class="td-speed">217 mph</td><td>2.8s</td><td>903 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:66%"></div></div>66%</div></td><td class="td-price">$1.15M</td><td class="td-fuel">Hybrid</td></tr>
+        <tr><td class="td-rank">18</td><td><div class="td-car">Zonda</div><div class="td-maker">Pagani</div></td><td class="td-speed">220 mph</td><td>3.4s</td><td>760 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:67%"></div></div>67%</div></td><td class="td-price">$15M+</td><td class="td-fuel">Petrol V12</td></tr>
+        <tr><td class="td-rank">19</td><td><div class="td-car">Veyron Super Sport</div><div class="td-maker">Bugatti</div></td><td class="td-speed">268 mph</td><td>2.5s</td><td>1,200 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:81%"></div></div>81%</div></td><td class="td-price">$1.7M</td><td class="td-fuel">Petrol W16</td></tr>
+        <tr><td class="td-rank">20</td><td><div class="td-car">812 Superfast</div><div class="td-maker">Ferrari</div></td><td class="td-speed">211 mph</td><td>2.9s</td><td>789 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:64%"></div></div>64%</div></td><td class="td-price">$340K</td><td class="td-fuel">Petrol V12</td></tr>
+        <tr><td class="td-rank">21</td><td><div class="td-car">911 GT2 RS</div><div class="td-maker">Porsche</div></td><td class="td-speed">211 mph</td><td>2.7s</td><td>700 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:64%"></div></div>64%</div></td><td class="td-price">$293K</td><td class="td-fuel">Petrol Flat-6</td></tr>
+        <tr><td class="td-rank">22</td><td><div class="td-car">Huracán STO</div><div class="td-maker">Lamborghini</div></td><td class="td-speed">193 mph</td><td>3.0s</td><td>640 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:59%"></div></div>59%</div></td><td class="td-price">$330K</td><td class="td-fuel">Petrol V10</td></tr>
+        <tr><td class="td-rank">23</td><td><div class="td-car">720S</div><div class="td-maker">McLaren</div></td><td class="td-speed">212 mph</td><td>2.8s</td><td>710 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:64%"></div></div>64%</div></td><td class="td-price">$300K</td><td class="td-fuel">Petrol V8</td></tr>
+        <tr><td class="td-rank">24</td><td><div class="td-car">DBS 770 Ultimate</div><div class="td-maker">Aston Martin</div></td><td class="td-speed">211 mph</td><td>3.2s</td><td>770 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:64%"></div></div>64%</div></td><td class="td-price">$340K</td><td class="td-fuel">Petrol V12</td></tr>
+        <tr><td class="td-rank">25</td><td><div class="td-car">Corvette ZR1</div><div class="td-maker">Chevrolet</div></td><td class="td-speed">233 mph</td><td>2.6s</td><td>1,064 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:71%"></div></div>71%</div></td><td class="td-price">$175K</td><td class="td-fuel">Petrol V8</td></tr>
+        <tr><td class="td-rank">26</td><td><div class="td-car">Ford GT</div><div class="td-maker">Ford</div></td><td class="td-speed">216 mph</td><td>3.0s</td><td>660 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:65%"></div></div>65%</div></td><td class="td-price">$500K</td><td class="td-fuel">Petrol V6</td></tr>
+        <tr><td class="td-rank">27</td><td><div class="td-car">LFA</div><div class="td-maker">Lexus</div></td><td class="td-speed">202 mph</td><td>3.7s</td><td>552 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:61%"></div></div>61%</div></td><td class="td-price">$375K</td><td class="td-fuel">Petrol V10</td></tr>
+        <tr><td class="td-rank">28</td><td><div class="td-car">SLS AMG</div><div class="td-maker">Mercedes-AMG</div></td><td class="td-speed">197 mph</td><td>3.7s</td><td>563 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:60%"></div></div>60%</div></td><td class="td-price">$200K</td><td class="td-fuel">Petrol V8</td></tr>
+        <tr><td class="td-rank">29</td><td><div class="td-car">Viper ACR</div><div class="td-maker">Dodge</div></td><td class="td-speed">206 mph</td><td>3.5s</td><td>645 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:62%"></div></div>62%</div></td><td class="td-price">$120K</td><td class="td-fuel">Petrol V10</td></tr>
+        <tr><td class="td-rank">30</td><td><div class="td-car">Wraith Black Arrow</div><div class="td-maker">Rolls-Royce</div></td><td class="td-speed">155 mph</td><td>4.4s</td><td>624 hp</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:47%"></div></div>47%</div></td><td class="td-price">$330K</td><td class="td-fuel">Petrol V12</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MANUFACTURERS -->
+<section id="makers" class="manufacturers">
+  <p class="section-tag">The Builders</p>
+  <h2 class="section-title">Manufacturers</h2>
+  <p class="section-sub">The marques behind the machines — from century-old Italian dynasties to American upstarts rewriting the record books.</p>
+  <div class="brands-grid">
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇫🇷</div>
+        <div class="brand-name">Bugatti</div>
+        <div class="brand-country">France / Germany</div>
+        <div class="brand-count">3 Cars — Chiron · Bolide · Veyron</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇸🇪</div>
+        <div class="brand-name">Koenigsegg</div>
+        <div class="brand-country">Sweden</div>
+        <div class="brand-count">2 Cars — Jesko · Agera RS</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇭🇷</div>
+        <div class="brand-name">Rimac</div>
+        <div class="brand-country">Croatia</div>
+        <div class="brand-count">1 Car — Nevera</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇺🇸</div>
+        <div class="brand-name">Hennessey</div>
+        <div class="brand-country">United States</div>
+        <div class="brand-count">1 Car — Venom F5</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇺🇸</div>
+        <div class="brand-name">SSC</div>
+        <div class="brand-country">United States</div>
+        <div class="brand-count">1 Car — Tuatara</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇬🇧</div>
+        <div class="brand-name">Aston Martin</div>
+        <div class="brand-country">United Kingdom</div>
+        <div class="brand-count">2 Cars — Valkyrie · DBS 770</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇬🇧</div>
+        <div class="brand-name">McLaren</div>
+        <div class="brand-country">United Kingdom</div>
+        <div class="brand-count">3 Cars — Speedtail · P1 · 720S</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇩🇪</div>
+        <div class="brand-name">Mercedes-AMG</div>
+        <div class="brand-country">Germany</div>
+        <div class="brand-count">2 Cars — AMG One · SLS AMG</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇮🇹</div>
+        <div class="brand-name">Ferrari</div>
+        <div class="brand-country">Italy</div>
+        <div class="brand-count">3 Cars — SF90 · LaFerrari · 812</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇮🇹</div>
+        <div class="brand-name">Lamborghini</div>
+        <div class="brand-country">Italy</div>
+        <div class="brand-count">3 Cars — Revuelto · Sián · Huracán STO</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇩🇪</div>
+        <div class="brand-name">Porsche</div>
+        <div class="brand-country">Germany</div>
+        <div class="brand-count">2 Cars — 918 Spyder · GT2 RS</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇮🇹</div>
+        <div class="brand-name">Pagani</div>
+        <div class="brand-country">Italy</div>
+        <div class="brand-count">2 Cars — Huayra R · Zonda</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇺🇸</div>
+        <div class="brand-name">Chevrolet</div>
+        <div class="brand-country">United States</div>
+        <div class="brand-count">1 Car — Corvette ZR1</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇺🇸</div>
+        <div class="brand-name">Ford</div>
+        <div class="brand-country">United States</div>
+        <div class="brand-count">1 Car — Ford GT</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇯🇵</div>
+        <div class="brand-name">Lexus</div>
+        <div class="brand-country">Japan</div>
+        <div class="brand-count">1 Car — LFA</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇺🇸</div>
+        <div class="brand-name">Dodge</div>
+        <div class="brand-country">United States</div>
+        <div class="brand-count">1 Car — Viper ACR</div>
+      </div>
+    </div>
+    <div class="brand-card">
+      <div class="brand-info">
+        <div class="brand-icon">🇬🇧</div>
+        <div class="brand-name">Rolls-Royce</div>
+        <div class="brand-country">United Kingdom</div>
+        <div class="brand-count">1 Car — Wraith Black Arrow</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAST FACTS -->
+<section id="facts" class="facts-section">
+  <p class="section-tag">Did You Know?</p>
+  <h2 class="section-title">Fast Facts</h2>
+  <p class="section-sub">The extraordinary stories, records, and engineering feats behind the world's most extreme automobiles.</p>
+  <div class="facts-grid">
+    <div class="fact-card">
+      <div class="fact-icon">⚡</div>
+      <div class="fact-title">Electric Dominance</div>
+      <div class="fact-text">The Rimac Nevera produces 1,914 hp from four electric motors — more than any other car on this list — and hits 60 mph in just 1.74 seconds. It holds multiple simultaneous world records for electric vehicles including quickest quarter mile and fastest 0–60.</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🏁</div>
+      <div class="fact-title">The Holy Trinity</div>
+      <div class="fact-text">The LaFerrari, McLaren P1, and Porsche 918 Spyder were released simultaneously in 2013–2014 — a once-in-a-generation convergence of the world's three most prestigious supercar makers all producing their ultimate hybrid hypercars at exactly the same time.</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🔬</div>
+      <div class="fact-title">The Impossible Engine</div>
+      <div class="fact-text">Volkswagen Group reportedly spent $1.5 billion developing the Bugatti Veyron — and lost money on every single car sold. Engineers said it was impossible to build. Bugatti built it anyway, and changed what the world thought possible in a road car.</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🎵</div>
+      <div class="fact-title">A Symphony at 9,000 RPM</div>
+      <div class="fact-text">The Lexus LFA's V10 revs so fast that conventional gauges couldn't keep up — Lexus had to use a digital display. The exhaust note was tuned by Yamaha like a musical instrument and is widely considered one of the greatest engine sounds ever recorded.</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🏆</div>
+      <div class="fact-title">Nevada Record Day</div>
+      <div class="fact-text">On a single day on a Nevada highway in 2017, the Koenigsegg Agera RS set multiple simultaneous world records: 277.9 mph two-way average, fastest 0–249 mph–0 in 33.29 seconds, and fastest 0–186 mph–0 in 36.44 seconds. All broken in one run.</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🎬</div>
+      <div class="fact-title">Ford vs Ferrari — Part II</div>
+      <div class="fact-text">The Ford GT was built to return to Le Mans exactly 50 years after the original GT40's historic 1-2-3 finish in 1966. In 2016, it won its class — beating Ferrari again. Hollywood couldn't write it better. Ford also required buyers to apply and rejected celebrities.</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🌪️</div>
+      <div class="fact-title">F5 Fury</div>
+      <div class="fact-text">The Hennessey Venom F5 is named after the most destructive category on the Fujita tornado scale. Its 6.6L "Fury" V8 produces 1,817 hp and targets 311 mph — a speed that would require the car to cover the length of a football field every half second.</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🇫1</div>
+      <div class="fact-title">Street-Legal F1</div>
+      <div class="fact-text">The Mercedes-AMG One is the only production road car ever built using a current-specification Formula 1 powertrain. It took 6 years and nearly got cancelled trying to make Lewis Hamilton's 2015 championship-winning engine comply with road car regulations.</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">💰</div>
+      <div class="fact-title">Best Value on the List</div>
+      <div class="fact-text">The Chevrolet Corvette ZR1 at ~$175,000 produces 1,064 hp and hits 233 mph — making it the greatest performance-per-dollar on this entire list. It costs less than 1/20th of the Bugatti Bolide while offering comparable straight-line speed. America's gift to enthusiasts.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Apex Drive</div>
+  <div class="footer-copy">© 2025 Apex Drive · A Definitive Guide to the World's 30 Most Extreme Machines · All specifications for reference only</div>
+</footer>
+
+</body>
+</html>
