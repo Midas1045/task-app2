@@ -1,41 +1,50 @@
 pipeline {
     agent any
-
+    environment {
+        DOCKER_USERNAME = "clint7"
+        BACKEND_IMAGE  = "${DOCKER_USERNAME}/backend"
+        FRONTEND_IMAGE = "${DOCKER_USERNAME}/projects-1-frontend"
+        VERSION = "${BUILD_NUMBER}"
+    }
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                // Pull code from GitHub
-                git url: 'https://github.com/Midas1045/task-app2.git', branch: 'main'
+                checkout scm
             }
         }
-
-        stage('Install Backend Dependencies') {
+        stage('Build Images') {
             steps {
-                dir('backend') {
-                    sh 'npm install'
+                sh '''
+                docker build -t $BACKEND_IMAGE:$VERSION ./backend
+                docker build -t $FRONTEND_IMAGE:$VERSION ./frontend
+                '''
+            }
+        }
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
             }
         }
-
-        stage('Install Frontend Dependencies') {
+        stage('Push Images') {
             steps {
-                dir('frontend') {
-                    sh 'npm install'
-                }
+                sh '''
+                docker push $BACKEND_IMAGE:$VERSION
+                docker push $FRONTEND_IMAGE:$VERSION
+                '''
             }
         }
-
-        stage('Verify Environment') {
+        stage('Deploy to Kubernetes') {
             steps {
-                sh 'node -v'
-                sh 'npm -v'
-            }
-        }
-
-        stage('List Workspace') {
-            steps {
-                sh 'pwd'
-                sh 'ls -la'
+                sh '''
+                kubectl set image deployment/backend-deployment backend=$BACKEND_IMAGE:$VERSION
+                kubectl set image deployment/frontend-deployment frontend=$FRONTEND_IMAGE:$VERSION
+                '''
             }
         }
     }
