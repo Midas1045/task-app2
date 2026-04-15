@@ -27,7 +27,7 @@ This repository is a comprehensive, hands-on project designed to provide practic
 * Docker
 * Docker Hub
 * Terraform
-* Kubernetes
+* Kubernetes-
 
 ## Github account creation
 
