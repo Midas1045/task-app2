@@ -6,7 +6,7 @@ The Lab Task-App is a comprehensive lab project that combines frontend and backe
 1. Introduction
 2. Prerequisites and services used
 3. Github account creation
-4. Task App configurations
+4. Task App configuration
 5. Github Actions
 6. Jenkins Pipeline Automations
 7. Docker Installation and Image Creation
