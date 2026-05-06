@@ -11,8 +11,8 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 6. Jenkins Pipeline Automations
 7. Docker Installation and Image Creation
 8. Docker Hub and Repositories
-9. Infrastructure as a code
-10. Kubernetes
+9. Kubernetes
+10. Monitoring using Prometheus and Grafana
 
 ## Introduction
 This repository is a comprehensive, hands-on project designed to provide practical experience in full-stack development and modern DevOps workflows. This project integrates a dynamic frontend and robust backend, powered by automated CI/CD pipelines and Jenkins-driven build orchestration. Containerization is handled with Docker for consistent deployments, while Terraform manages the infrastructure to enable scalable, reproducible environments.
@@ -26,8 +26,8 @@ This repository is a comprehensive, hands-on project designed to provide practic
 * Jenkins
 * Docker
 * Docker Hub
-* Terraform
-* Kubernetes-
+* Kubernetes
+* Prometheus and Grafana
 
 ## Github account creation
 
