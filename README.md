@@ -237,5 +237,7 @@ Run commands:
 Access your Jenkins server and verify the console output
 To view/confirm that the docker image exists, run docker images. This displays docker images present in the server
 
+<p align="center"> <img width="1159" height="684" alt="Screenshot 2026-05-05 141325" src="https://github.com/user-attachments/assets/a7fb5838-a718-4f98-90eb-13d34c5d5e64" />
+
 
 
