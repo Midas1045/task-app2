@@ -142,7 +142,7 @@ These rules, especially All traffic, is subject to change to specific public add
 7. Access Jenkins
    * Copy the public address of the EC2 instance and replace here. http://Instance_Public_Address:8080 and access it on the web browser
    * On the displayed page, an admin password will be requested. This can be obtained from the instance
-   * On the Instance CLI, run sudo cat/var/lib/jenkins/secrets/initialAdminPassword to obtain the password. Copy the results and paste where it was requested
+   * On the Instance CLI, run `sudo cat/var/lib/jenkins/secrets/initialAdminPassword` to obtain the password. Copy the results and paste where it was requested
    * Set up your email, username and password. Then select Install Suggested Plugins.
 
 8. CI Pipeline 
@@ -185,33 +185,38 @@ Key Concepts include:
 Steps 
 1. Installation of Docker desktop and create a dockerfile
    * Download and install docker desktop locally then sign up or sign in if you already have an account
-   * Run notepad Dockerfile in the root directory of the project. This will open Notepad with a new file called Dockerfile.
+   * Run `notepad Dockerfile` in the frontend and backend directory of the project. This will open Notepad with a new file called Dockerfile.
    * Paste the basic Dockerfile script for the Node.js project
 
 2. Build Docker Image Locally
-   * Run docker build -t project . in the root directory. This command builds a Docker image from your Dockerfile and tags it with the name of the project.
+   * Run `docker build -t project .` in the frontend and backend directory. This command builds a Docker image from your Dockerfile and tags it with the name of 	 the project.
 
 3. Run the Container
-   * Run command docker run -p 3000:3000 project. This maps the backend to run on port => 3000. 
-   * Open this in your browser: http://localhost:3000. This tells Docker to create and start a running container from the image built
+   * Run command `docker run -d -p 3000:3000 project:tag`. This maps the frontend to run on port => 3000.
+   * Run command `docker run -d -p 8081:3000 project:tag`. This maps the backend to run on port => 8081.
+   * Ensure both ports are added to security groups to enable connectivity. 
 
-4. Push Dockerfile to Github
+4. Verify Container Status
+    * Run `docker ps -q`. This shows only IDs of running containers.
+    * Run `docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}`. This shows running containers with more detail.
+    
+5. Push Dockerfile to Github
   * Run the following commands
-    * git add .
-    * git commit -m “activity”
-    * git push
+    * `git add .`
+    * `git commit -m “activity”`
+    * `git push`
  
 This uploads the Dockerfile to GitHub repository so Jenkins can access it when running the CI pipeline. Since Jenkins is connected to GitHub through the webhook, pushing new code will automatically trigger a new Jenkins build.
 
-5. Install Docker on Jenkins Server
-   * On the instance, run sudo apt update and sudo apt upgrade to update dependencies and security patch configurations
-   * Run command sudo apt install docker.io -y - This installs docker in the instance serving as the jenkins server that allows the CI pipeline to build and run        container images during automated builds
-   * Run commands sudo systemctl start docker and sudo systemctl enable docker. This conveys two processes: Start the docker service and also ensure it is enabled      automatically whenever the server get booted up
+6. Install Docker on Jenkins Server
+   * On the instance, run `sudo apt update && sudo apt upgrade` to update dependencies and security patch configurations
+   * Run command `sudo apt install docker.io -y` - This installs docker in the instance serving as the jenkins server that allows the CI pipeline to build and run      container images during automated builds
+   * Run commands `sudo systemctl start docker && sudo systemctl enable docker`. This conveys two processes: Start the docker service and also ensure it is 		 enabled automatically whenever the server gets booted up
 
-6. Enable access for Jenkins to Use Docker
-   * Run sudo usermod -aG docker jenkins. This grants permission to Jenkins to run docker commands. Without this, Jenkins pipelines will fail when trying to build      Docker images. For Jenkins to build Docker images, Docker must be installed on that server.
+7. Enable access for Jenkins to Use Docker
+   * Run `sudo usermod -aG docker jenkins`. This grants permission to Jenkins to run docker commands. Without this, Jenkins pipelines will fail when trying to 		 build Docker images. For Jenkins to build Docker images, Docker must be installed on that server.
 
-7. Update the Jenkins Pipeline
+8. Update the Jenkins Pipeline
    * In Week 3, the Jenkins pipeline included only two stages:
       * Install dependencies
       * Verify that Node.js is installed
@@ -225,19 +230,19 @@ With this update, the pipeline will now:
 
 By introducing the Docker build stage, Jenkins can automatically package the application into a container image whenever new code is pushed to GitHub.
 
-
-8. Push the updated jenkinsfile to Github
+9. Push the updated jenkinsfile to Github
 Run commands:
-	* git  add .
-	* git commit -m
-	* git push
+	* `git  add .`
+	* `git commit -m`
+	* `git push`
 	This pushes the changes made to the project repository
 
-9. Verify Docker Build
+10. Verify Docker Build
 Access your Jenkins server and verify the console output
 To view/confirm that the docker image exists, run docker images. This displays docker images present in the server
 
 <p align="center"> <img width="1159" height="684" alt="Screenshot 2026-05-05 141325" src="https://github.com/user-attachments/assets/a7fb5838-a718-4f98-90eb-13d34c5d5e64" />
 
+## Kubernetes
 
 
