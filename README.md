@@ -244,5 +244,102 @@ To view/confirm that the docker image exists, run docker images. This displays d
 <p align="center"> <img width="1159" height="684" alt="Screenshot 2026-05-05 141325" src="https://github.com/user-attachments/assets/a7fb5838-a718-4f98-90eb-13d34c5d5e64" />
 
 ## Kubernetes
+1. Pre- Kubernetes Setup
+
+	* Before running commands for installation, ensure you have enough space on your instance type of your virtual machine. Jenkins previously installed consumes 	  a lot of space and as such might pose an issue for setting up kubernetes. The workaround to this is to increase the storage capacity of the existing 			  instance type without having to delete or repurpose another one. Ideally anything 30GB and above should suffice.
+	   * On the instance page, navigate to Instance state near the top right and click
+	   * A drop down menu showing options is displayed then select Stop instance. The instance is stopped successfully.
+	   * Head to the Actions tab beside the Instance state and click
+	   * Navigate to the Instance Configuration sub-menu then select Change Instance type.
+	   * This redirects to a page where a new instance type is selected depending on what is needed. Then Save
+	   * Restart your instance and SSH into it via Mobaxtern
+
+2. Kubernetes Installation
+
+	* Lightweight Kubernetes was installed - Easy to install, half the memory, all in a binary of less than 100 MB. K3s is a lightweight, production-ready 			  Kubernetes distribution designed for low-resource environments, edge computing, IoT devices, development labs, and single-node or small clusters. It 			  packages core Kubernetes components into a single compact binary, reducing memory usage and simplifying installation, management, and deployment 	compared 	  to standard Kubernetes setups. 
+		* To install, run `curl -sfL https://get.k3s.io | sh -` to install and set up Kubernetes on the EC2 instance.
+		* Run `sudo kubectl get nodes` to verify status.
+
+3.  Create K8s Folder Locally
+
+	* Run `mkdir k8s` to create a dedicated kubernetes folder. This serves to store the deployment and service manifest files needed for operations.
+	* Run the following commands: 
+		* `notepad backend-deployment.yaml`
+		* `notepad backend-service.yaml`
+		* `notepad frontend-deployment.yaml`
+		* `notepad frontend-service.yaml`		
+	* For each command, input or paste the required script in the text editor and save.
+	* Always ensure that the name of the docker images matches what is found in the docker hub repository to avoid errors.
+
+4. Git Operations
+	* On the local repository, `run git status`. This shows all untracked changes recently made in the repository
+	* Run `git add .` - This prepares the files and adds them to a staging area
+	* Run `git commit -m “description”`- Records all staged changes as a permanent snapshot in your local repository, along with a message describing what was 		  modified.
+	* Run `git push`. This pushes the changes to the public remote repository
+	* On the EC2 instance, run `git clone “repo link”`- This downloads a complete copy of the local project repository on the Instance. This enables for easy            access to the files needed for the Kubernetes setup
+
+ 5. Pull Docker Images from Docker Hub
+
+	* Run `sudo apt install docker.io`. This installs docker in the EC2 instance. 
+	* Run `sudo systemctl status docker` to verify installation.
+	* Run command `docker login`. This enables you to add your docker credentials so as to access docker hub to push/pull docker images from the repository.
+	* After successful authentication, run `docker pull “yourname/repo:description”` to pull the latest images from the repository. Eg; 
+	  * `sudo docker pull clint7/frontend:Image1`
+	  * `sudo docker pull clint7/backend:Image2`
+
+  6. Apply on VM
+
+	 * After cloning the local repository to the EC2 instance, run cd k8s to access the Kubernetes folder.
+	 * Run ls to view and verify files
+	 * Run the following commands to apply configurations for deployment and services files: 
+	 	* `sudo kubectl apply -f backend-deployment.yaml`
+	 	* `sudo kubectl apply -f backend-service.yaml`
+		* `sudo kubectl apply -f frontend.service.yaml`
+		* `sudo kubectl apply -f frontend-deployment.yaml`
+	
+* If deployment and service files are correct, a successful creation message will be displayed. This can change to configured if modifications were made to          the yaml files
+	* To verify the output, run `sudo kubectl get pods`. This command lists all running pods in the cluster along with their current state. A healthy deployment         should show a STATUS of "Running" and a READY value of "1/1", meaning one out of one container inside the Pod is healthy and accepting traffic.
+	* Run `sudo kubectl get svc`. This command lists all services in the cluster. Services give Pods stable network identities and control how they are accessed.
+	* If a Pod shows "CrashLoopBackOff" or "Error", it means the container is failing to start. Run `sudo kubectl logs <pod-name>` to investigate and troubleshoot.
+
+7. Add permissions and update Jenkins file
+
+The Jenkinsfile needs to be modified to handle the complete pipeline — building both the frontend and backend Docker images, pushing them to Docker Hub, and       automatically deploying the updated images to the running Kubernetes cluster. Old Jenkins file script is updated with new one to ensure continuous deployment..   After this, carry out git operations to push to the remote repository.
+
+
+* Generate a Docker Hub Access Token. 
+	* Navigate to https://hub.docker.com/ and login to access the dashboard
+	* Head to the profile section and select account settings
+	* On the new tab, locate and select Personal Access Tokens from the left navigation menu.
+	* Click Generate Token, fill in the required details including a description, set the access type to Read and Write, then click Generate.
+	* Copy the generated token immediately as it will not be displayed again once you leave the page.
+* Add generated access token to Jenkins
+	* Navigate to Jenkins and open the Settings menu, then follow this path: Credentials → System → Global credentials → Add Credentials.
+	* In the Kind field, select Username with password from the dropdown.
+	* In the Username field, enter your Docker Hub username 
+	* In the Password field, paste the access token you generated from Docker Hub. Do not use your Docker Hub account password here — the access token is what           Jenkins uses to authenticate securely.
+	* In the ID field, enter dockerhub-creds exactly as written. This is the identifier the Jenkinsfile uses to reference this credential at runtime.
+	* In the Description field, enter Docker Hub Access Token to make it easy to identify later.
+	* Click Create to save the credential. By doing this, jenkins has been authenticated to push images created to docker hub. 
+* Jenkins Configuration for Kubernetes Access
+	* SSH into your VM and run the following command; `sudo chmod 644 /etc/rancher/k3s/k3s.yaml`. This gives Jenkins read access to the K3s configuration file,          allowing it to communicate with the Kubernetes cluster:
+	* To add Jenkins to the sudo group so it has the necessary system-level permissions, run `sudo usermod -aG sudo jenkins`
+	* Run `sudo visudo`. This opens the sudoers file safely using the following command. This file controls which users can run commands with elevated privileges:
+	* Scroll to the bottom of the sudoers file and add the following line: jenkins ALL=(ALL) NOPASSWD: /usr/local/bin/kubectl. This allows Jenkins to run kubectl        commands without being prompted for a password each time:
+	* Save and exit the file, then restart Jenkins to apply all the changes. Run command `sudo systemctl restart jenkins`
+
+8. Pipeline Verification
+	* Run the following command sudo kubectl get pods on your VM to confirm the pipeline executed successfully. You should see newly created Pods with a recent          AGE, indicating that fresh deployments have been rolled out. This confirms that Jenkins successfully built both images and pushed the new versioned copies         to Docker Hub. Kubernetes detected the updated image version and automatically performed a rolling update, replacing the old Pods with new ones without any 	  manual intervention.
+
+
+
+
+	
+
+
+
+    
+
+
 
 
