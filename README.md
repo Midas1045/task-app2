@@ -6,7 +6,7 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 1. Introduction
 2. Prerequisites and services used
 3. Github account creation
-4. Task App configuration
+4. Web App configuration
 5. Github Actions
 6. Jenkins Pipeline Automations
 7. Docker Installation and Image Creation
@@ -37,7 +37,7 @@ This serves as a cloud-based datacenter where all repositories are stored.
 * On the dashboard, navigate to ‘+’ sign and select ‘New Repository’. 
 * On the next page, fill in the repository name and adjust the configuration settings to what is needed. Then select ‘Create Repository’
 
-## Task App configuration
+## Web App configuration
 
 * Nodejs installation
   * Download nodejs from official website 
