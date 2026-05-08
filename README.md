@@ -331,6 +331,45 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 8. Pipeline Verification
 	* Run the following command `sudo kubectl get pods` on your VM to confirm the pipeline executed successfully. You should see newly created Pods with a recent        AGE, indicating that fresh deployments have been rolled out. This confirms that Jenkins successfully built both images and pushed the new versioned copies         to Docker Hub. Kubernetes detected the updated image version and automatically performed a rolling update, replacing the old Pods with new ones without any 	  manual intervention.
 
+9. Install and Configure OpenLens for External K3s Kubernetes Cluster Connectivity
+
+    Openlens is a GUI tool to manage Kubernetes clusters It serves as a dashboard for monitoring and troubleshooting K8s setup
+   * Install Openlens
+		 * Go to https://github.com/MuhammedKalkan/OpenLens/releases and download the official file lts version
+		 * Navigate to the downloaded .exe file on the local machine and double-click. 
+	 	 * Follow the installation prompts and finish setup.
+
+
+   * Update Kubeconfig to Enable Remote Server Access in OpenLens
+
+     * On the server, run the following command to display the K3s kubeconfig file: cat /etc/rancher/k3s/k3s.yaml  . This displays the Kubernetes cluster 			  configuration, including the API server endpoint, certificate authority data, and authentication credentials required to connect the cluster to 				  OpenLens.
+     * Next, highlight and copy the contents of the K3s kubeconfig file, then paste it into OpenLens to authenticate and enable cluster access. However, 			  the connection will still fail even after replacing the localhost address (`127.0.0.1`) with the server’s public IP address, because the K3s API 				  server is still configured to advertise and generate certificates for the localhost endpoint by default.
+     * Run the following command to view the K3s system service configuration file: cat /etc/systemd/system$ k3s.service. This displays the K3s systemd 			  service definition, which contains the startup configuration used to launch the K3s server. This is where the Kubernetes API server settings can be 			  modified to advertise the server’s external IP address and generate the correct TLS certificates required for remote access through OpenLens.
+     * Run the following command to edit the K3s system service configuration file: `sudo nano /etc/systemd/system/k3s.service`
+     * Under the ExecStart section, update the K3s server configuration to include the external IP address
+       ```
+       ExecStart=/usr/local/bin/k3s \
+	       server \
+	       --tls-san {server IP adddress} \
+	       --node-ip {server IP adddress} \
+		   --advertise-address {server IP adddress} \
+
+		```
+	  These parameters ensure that the Kubernetes API server advertises the correct public endpoint and generates TLS certificates that allow external tools such        as OpenLens to connect successfully.
+    * Save the file and restart the K3s service to apply the updated API server configuration by running the following commands:
+      ```
+      sudo systemctl daemon-reexec
+	  sudo systemctl daemon-reload
+	  sudo systemctl restart k3s
+      ```
+   * Verify by running `kubectl cluster-info`. This should display the server ip address and its mapped port (6443) instead of the local host
+   * After the service restarts, reconnect to OpenLens using the updated kubeconfig file. The cluster should now authenticate successfully using the server’s 		 public IP address instead of the default localhost endpoint
+   * The OpenLens dashboard should now be fully connected and live, allowing you to monitor the Kubernetes cluster in real time, including node status, workload,       pods, deployments, namespaces, events, and resource metrics such as CPU and memory usage.
+
+
+
+
+
 
 
 
