@@ -329,7 +329,7 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 	* Save and exit the file, then restart Jenkins to apply all the changes. Run command `sudo systemctl restart jenkins`
 
 8. Pipeline Verification
-	* Run the following command sudo kubectl get pods on your VM to confirm the pipeline executed successfully. You should see newly created Pods with a recent          AGE, indicating that fresh deployments have been rolled out. This confirms that Jenkins successfully built both images and pushed the new versioned copies         to Docker Hub. Kubernetes detected the updated image version and automatically performed a rolling update, replacing the old Pods with new ones without any 	  manual intervention.
+	* Run the following command `sudo kubectl get pods` on your VM to confirm the pipeline executed successfully. You should see newly created Pods with a recent        AGE, indicating that fresh deployments have been rolled out. This confirms that Jenkins successfully built both images and pushed the new versioned copies         to Docker Hub. Kubernetes detected the updated image version and automatically performed a rolling update, replacing the old Pods with new ones without any 	  manual intervention.
 
 
 
