@@ -335,9 +335,10 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 
     Openlens is a GUI tool to manage Kubernetes clusters It serves as a dashboard for monitoring and troubleshooting K8s setup
    * Install Openlens
-		 * Go to https://github.com/MuhammedKalkan/OpenLens/releases and download the official file lts version
-		 * Navigate to the downloaded .exe file on the local machine and double-click. 
-	 	 * Follow the installation prompts and finish setup.
+     
+	 * Go to https://github.com/MuhammedKalkan/OpenLens/releases and download the official file lts version
+	 * Navigate to the downloaded .exe file on the local machine and double-click. 
+	 * Follow the installation prompts and finish setup.
 
 
    * Update Kubeconfig to Enable Remote Server Access in OpenLens
