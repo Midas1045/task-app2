@@ -357,12 +357,12 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 
 		```
 	  These parameters ensure that the Kubernetes API server advertises the correct public endpoint and generates TLS certificates that allow external tools such        as OpenLens to connect successfully.
-    * Save the file and restart the K3s service to apply the updated API server configuration by running the following commands:
-      ```
-      sudo systemctl daemon-reexec
-	  sudo systemctl daemon-reload
-	  sudo systemctl restart k3s
-      ```
+	    * Save the file and restart the K3s service to apply the updated API server configuration by running the following commands:
+	      ```
+	      sudo systemctl daemon-reexec
+		  sudo systemctl daemon-reload
+		  sudo systemctl restart k3s
+	      ```
 	   * Verify by running `kubectl cluster-info`. This should display the server ip address and its mapped port (6443) instead of the local host
 	   * After the service restarts, reconnect to OpenLens using the updated kubeconfig file. The cluster should now authenticate successfully using the server’s 		 public IP address instead of the default localhost endpoint
 	   * The OpenLens dashboard should now be fully connected and live, allowing you to monitor the Kubernetes cluster in real time, including node status, 			  workload, pods, deployments, namespaces, events, and resource metrics such as CPU and memory usage.
