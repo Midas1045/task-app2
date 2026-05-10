@@ -356,7 +356,7 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 		   --advertise-address {server IP adddress} \
 
 		```
-	  These parameters ensure that the Kubernetes API server advertises the correct public endpoint and generates TLS certificates that allow external tools such        as OpenLens to connect successfully.
+		  These parameters ensure that the Kubernetes API server advertises the correct public endpoint and generates TLS certificates that allow external tools 		  such as OpenLens to connect successfully.
 	    * Save the file and restart the K3s service to apply the updated API server configuration by running the following commands:
 	      ```
 	      sudo systemctl daemon-reexec
