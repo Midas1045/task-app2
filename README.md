@@ -4,9 +4,9 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 
 ## Table of Contents
 1. [Introduction](#Introduction)
-2. [Prerequisites and services used](#prerequisites-and-services-used)
+2. [Prerequisites and Services used](#prerequisites-and-services-used)
 3. [Github account creation](#github-account-creation)
-4. [Web App configuration](#web-app-configuration)
+4. [Static Web App configuration](#static-web-app-configuration)
 5. [Github Actions](#github-actions)
 6. [Jenkins Setup and Automation](#jenkins-setup-and-automation)
 7. [Docker Installation and Image Creation](#docker-installation-and-image-creation)
@@ -36,7 +36,7 @@ This serves as a cloud-based datacenter where all repositories are stored.
 * On the dashboard, navigate to ‘+’ sign and select ‘New Repository’. 
 * On the next page, fill in the repository name and adjust the configuration settings to what is needed. Then select ‘Create Repository’
 
-## Web App configuration
+##Static Web App configuration
 
 * Nodejs installation
   * Download nodejs from official website 
