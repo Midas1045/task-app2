@@ -478,6 +478,207 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 	* run kubectl port-forward (for temporary local access)
 	* NodePort (for basic external access). This was used.
 	* Ingress controller (recommended for production setups)
+
+ 11.  Create grafana-service.yaml Locally
+
+		Run the following commands:
+
+		```
+		touch grafana-service.yaml
+		nano grafana-service.yaml
+		
+		```
+		This creates the yaml file locally and lets you update it with the desired configuration script. This configuration updates the Grafana Kubernetes service 		from a private internal service to an externally accessible one. This Moves Grafana from internal-only (ClusterIP) to externally accessible (NodePort) 			thus allowing access to the Kubernetes cluster via browser without port-forwarding.
+
+ 12.  Push to GitHub
+      
+		Run commands : 
+		```
+		git add .
+		git commit -m "Expose Grafana via NodePort"
+		git push
+		
+		```
+		This stages your Kubernetes configuration changes, commits them to version control and pushes them to your GitHub repository
+
+ 13.  Pull Changes on Your VM
+     
+		After pushing, log into your VM and run
+		```
+		cd Task-App
+		git pull
+		
+		```
+		This updates the server with the latest configuration from GitHub
+		Syncs local deployment files with remote repositories. Ensures your Kubernetes cluster uses the latest YAML change and keeps the VM environment aligned 		with version control.
+
+ 14. Delete Old Grafana Service
+     
+		Run:
+		```
+		kubectl delete svc monitoring-grafana
+		
+		```
+		This removes the existing ClusterIP service created by Helm thus preventing conflicts between old and new service definitions. This
+		ensures NodePort configuration takes full effect.
+
+  15.  Apply New Service Configuration
+      
+		Run command: 
+		```
+		kubectl apply -f grafana-service.yaml
+		
+		```
+		This creates a new Kubernetes service using your custom NodePort configuration and activates external access to Grafana using the new port designated for 		external access.
+
+ 16.  Verify Service
+     
+		Run command:
+		```
+		kubectl get svc monitoring-grafana
+		
+		```
+		This confirms that the service configuration file has been applied successfully. The expected output should be NodePort   80:32000/TCP. At this stage, 			Grafana is exposed via the nodeport, can be accessed via the browser and the service is now reachable from outside the Kubernetes cluster.
+
+ 17.  Update Inbound Rules on VM
+     
+		* Navigate to the security groups section on the working instance
+		* Select Edit Inbound Rules
+		* Add the new rule which includes the new port number for the grafana and set access sources
+		* Save the changes
+
+ 18.  Get Grafana Login Credentials
+     
+		Run command: 
+		```
+		kubectl get secret monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+		
+		```
+		This retrieves the default admin password stored securely in Kubernetes secrets. Grafana uses a secret-based authentication system to protect dashboards.
+
+ 19.  Access Grafana Dashboard
+		     
+		* Login to the dashboard by http://{serverIP}:32000
+		* For the username, use admin and add the default admin password obtained
+		* Access the dashboard and navigate through the available charts showing different metrics.
+
+ 20. Run Simulation Tests
+     
+		* Check Existing GPG Keys 
+
+			Run
+			```
+			sudo gpg -k
+			
+			```
+			This lists all currently installed GPG keys on the system. It helps verify whether the K6 repository signing key already exists before adding a new 			one.
+
+		* Add the K6 Repository GPG Key
+
+			Run
+			```
+			sudo gpg --no-default-keyring \
+			--keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+			--keyserver hkp://keyserver.ubuntu.com:80 \
+			--recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+			
+			```
+			This downloads and stores the official K6 repository signing key. It ensures packages downloaded from the K6 repository are trusted and verified. 				Protects against tampered or malicious packages and  enables secure package installation using APT
+
+        * Add the K6 Repository 
+
+			Run
+			```
+			echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+			
+			```
+			This adds the official K6 package repository to the system package sources. Allows Ubuntu to download and install K6 directly using the APT package 			manager.
+
+        * Update Package Index
+          
+			Run
+			```
+			sudo apt update
+			
+			```
+			This refreshes the package index and retrieves package information from the newly added K6 repository. It ensures the system recognizes K6 as an 				available installable package.
+
+        * Install K6 
+			
+			Run
+			```
+			sudo apt install k6 -
+        
+			```
+        
+			This downloads and installs the K6 load testing tool. K6 is used to:
+			* Simulate multiple users
+			* Generate traffic against backend services
+			* Measure application performance under load
+			* Identify bottlenecks and scalability issues
+    
+       * Create the Stress Test Script
+         
+			Run
+			```
+			nano stress-test.js
+			
+			```
+			This creates and opens a JavaScript file for defining the K6 load test configuration. K6 uses JavaScript-based test scripts to simulate user behavior 			and HTTP requests. 
+
+       * Add the Load Testing Script
+         
+			Run
+			```
+			import http from 'k6/http';
+			
+			export const options = {
+			  vus: 50,
+			  duration: '30s',
+			};
+			
+			export default function () {
+			  http.get('http://44.200.219.76/');
+			}
+			  
+			```
+
+			This script runs a simulation where there are 50 virtual users accessing the app simultaneously. This is used to test how the backend works under 				concurrent traffic.
+			The runtime duration for the stress test is set at 30s. This allows for observation of performance stability, resource utilization and response times 			over sustained traffic.
+			The `http.get()` sends repeated HTTP GET requests to the backend application. This measures application responsiveness, throughput, 
+			error outputs and availability under load.
+
+      * Run the Load Test 
+
+		Run
+		```
+		k6 run stress-test.js
+		
+		```
+		This executes the K6 stress test script against the target backend server. Provides real-time performance metrics including:
+		* Request rate
+		* Response time
+		* Failed requests
+		* Throughput
+		* Virtual user activity
+
+				
+
+
+
+
+
+     
+
+
+
+
+
+
+
+
+
+ 
 		
 
 
