@@ -8,7 +8,7 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 3. [Github account creation](#github-account-creation)
 4. [Web App configuration](#web-app-configuration)
 5. [Github Actions](#github-actions)
-6. [Jenkins Setup and Automation](#jenkins-setup-and-automations)
+6. [Jenkins Setup and Automation](#jenkins-setup-and-automation)
 7. [Docker Installation and Image Creation](#docker-installation-and-image-creation)
 8. [Kubernetes Single Node Cluster](#kubernetes-single-node-cluster)
 9. [Monitoring using Prometheus and Grafana](#monitoring-using-prometheus-and-grafana)
