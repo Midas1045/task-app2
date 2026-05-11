@@ -366,6 +366,131 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 	 * Verify by running `kubectl cluster-info`. This should display the server ip address and its mapped port (6443) instead of the local host
 	 * After the service restarts, reconnect to OpenLens using the updated kubeconfig file. The cluster should now authenticate successfully using the server’s 	   public IP address instead of the default localhost endpoint
 	 * The OpenLens dashboard should now be fully connected and live, allowing you to monitor the Kubernetes cluster in real time, including node status, 			   workload, pods, deployments, namespaces, events, and resource metrics such as CPU and memory usage.
+  
+  ## MONITORING USING PROMETHEUS AND GRAFANA
+
+  1. Update System Packages
+      
+		Run command: 
+		```
+		sudo apt-get update
+		
+		```
+		This updates the system’s package index so your server knows the latest available versions of software packages.It ensures you install the most recent and 		secure versions of tools like curl, dependencies, and system libraries.
+
+  2. Install Helm
+     
+		Run command:
+		```
+		curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+		
+		```
+		This Installs Helm, which is a package manager for Kubernetes called “charts.” Helm allows you to install complex applications (like Prometheus + Grafana) 		in a single command instead of manually creating multiple Kubernetes YAML files.
+
+  3. Verify Helm Installation
+     
+		Run command:
+		```
+		helm version
+		
+		```
+		Checks if Helm is correctly installed and shows the version. Confirms that Helm is ready before you start deploying workloads to your cluster.
+
+  4. Add Prometheus Helm Repository
+     
+		Run command:
+		```
+		helm repo add prometheus-community  https://prometheus-community.github.io/helm-charts
+		
+		```
+		Adds the official repository containing monitoring charts maintained by the Prometheus community. Helm needs a “source of packages” (repos) before you can 		install applications like kube-prometheus-stack.
+
+ 5. Update Helm Repositories
+     
+	Run command: 
+	```
+	helm repo update
+	
+	```
+	This refreshes the local list of available Helm charts from all configured repositories. Ensures you get the latest version of monitoring charts with bug 		fixes and updates.
+
+ 6. Fix K3s Kubeconfig Permissions
+      
+	Run command: 
+	```
+	sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+	
+	```
+	This changes file permissions so the Kubernetes configuration file can be read by non-root tools like kubectl and Helm. Without this, Helm and kubectl may 		fail with permission errors when trying to access the cluster.
+
+ 7. Set KUBECONFIG Environment Variable
+     
+	Run command:
+	```
+	export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+	
+	```
+	This tells Kubernetes tools (kubectl, Helm) where to find cluster configuration. Without this, your tools won’t know how to connect to the K3s cluster
+
+ 8. Install the Monitoring Stack 
+	Run command: 
+	```
+	helm install monitoring prometheus-community/kube-prometheus-stack
+	
+	```
+	Deploys the full monitoring stack into your Kubernetes cluster under the release name “monitoring”. 
+	This installs:
+
+	* Prometheus (metrics collection engine)
+	* Grafana (dashboard UI)
+	* Alertmanager (alert handling system)
+	* Kubernetes exporters (node, pod, API metrics)
+
+   	This is the core step that turns your cluster into a fully observable system with real-time monitoring.
+
+ 9. Verify Deployment
+      
+	Run Commands:
+	```
+	sudo kubectl get node
+	sudo kubectl get pods
+	sudo kubectl get svc
+	
+	```
+	Lists all running Kubernetes pods and services. Confirms that all monitoring components are running correctly and no pods are stuck in CrashLoop or Pending 	state. 
+
+10. Configure Grafana Service Ports 
+
+	Run command to check Grafana Service:
+	```
+	kubectl get svc monitoring-grafana
+	
+	```
+	This command retrieves the Kubernetes service configuration for Grafana that was deployed as part of the monitoring stack. 
+
+	Key Insight:
+	* The Grafana service is currently set to ClusterIP, meaning it is only accessible inside the Kubernetes cluster.
+	* It has no external or public IP, so you cannot open it directly in a browser.
+	* This is the default and most secure service type, used to prevent external access by default.
+	* At this stage, Grafana is running correctly but is not yet accessible outside the cluster.
+	
+	To access it, you would need:
+	* run kubectl port-forward (for temporary local access)
+	* NodePort (for basic external access). This was used.
+	* Ingress controller (recommended for production setups)
+		
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
