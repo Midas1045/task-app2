@@ -8,11 +8,10 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 3. [Github account creation](#github-account-creation)
 4. [Web App configuration](#web-app-configuration)
 5. [Github Actions](#github-actions)
-6. [Jenkins Pipeline Automations](#jenkins-pipeline-automations)
+6. [Jenkins Setup and Automation](#jenkins-setup-and-automations)
 7. [Docker Installation and Image Creation](#docker-installation-and-image-creation)
-8. [Docker Hub and Repositories](#docker-hub-and-repositories)
-9. [Kubernetes Single Node Cluster](#kubernetes-single-node-cluster)
-10. [Monitoring using Prometheus and Grafana](#monitoring-using-prometheus-and-grafana)
+8. [Kubernetes Single Node Cluster](#kubernetes-single-node-cluster)
+9. [Monitoring using Prometheus and Grafana](#monitoring-using-prometheus-and-grafana)
 
 ## Introduction
 This repository is a comprehensive, hands-on project designed to provide practical experience in full-stack development and modern DevOps workflows. This project integrates a dynamic frontend and robust backend, powered by automated CI/CD pipelines and Jenkins-driven build orchestration. Containerization is handled with Docker for consistent deployments, while Terraform manages the infrastructure to enable scalable, reproducible environments.
@@ -243,7 +242,7 @@ To view/confirm that the docker image exists, run docker images. This displays d
 
 <p align="center"> <img width="1159" height="684" alt="Screenshot 2026-05-05 141325" src="https://github.com/user-attachments/assets/a7fb5838-a718-4f98-90eb-13d34c5d5e64" />
 
-## Kubernetes
+## Kubernetes Single Node Cluster
 1. Pre- Kubernetes Setup
 
 	* Before running commands for installation, ensure you have enough space on your instance type of your virtual machine. Jenkins previously installed consumes 	  a lot of space and as such might pose an issue for setting up kubernetes. The workaround to this is to increase the storage capacity of the existing 			  instance type without having to delete or repurpose another one. Ideally anything 30GB and above should suffice.
