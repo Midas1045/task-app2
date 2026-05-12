@@ -366,7 +366,7 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 	 * After the service restarts, reconnect to OpenLens using the updated kubeconfig file. The cluster should now authenticate successfully using the server’s 	   public IP address instead of the default localhost endpoint
 	 * The OpenLens dashboard should now be fully connected and live, allowing you to monitor the Kubernetes cluster in real time, including node status, 			   workload, pods, deployments, namespaces, events, and resource metrics such as CPU and memory usage.
   
-  ## MONITORING USING PROMETHEUS AND GRAFANA
+  ## Monitoring using Prometheus And Grafana
 
   1. Update System Packages
       
