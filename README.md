@@ -16,7 +16,7 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 ## Introduction
 This repository is a comprehensive, hands-on project designed to provide practical experience in full-stack development and modern DevOps workflows. This project integrates a dynamic frontend and robust backend, powered by automated CI/CD pipelines and Jenkins-driven build orchestration. Containerization is handled with Docker for consistent deployments, while Terraform manages the infrastructure to enable scalable, reproducible environments.
 
-## Prequisites and services used
+## Prerequisites and services used
 * Local Working Directory with Frontend and Backend features
 * Access to AWS Console Dashboard
 * An Active Subscription (Free/Paid Tier)
