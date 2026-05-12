@@ -78,7 +78,7 @@ pipeline {
         stage('Prometheus Metrics Validation') {
             steps {
                 script {
-                    def cpuQuery = "rate(container_cpu_usage_seconds_total[1m])"
+                    def cpuQuery = "rate(container_cpu_usage_seconds_total%5B1m%5D)"
                     
                     def response = sh(
                         script: """
