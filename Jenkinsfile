@@ -6,7 +6,7 @@ pipeline {
         BACKEND_IMAGE  = "${DOCKER_USERNAME}/backend"
         FRONTEND_IMAGE = "${DOCKER_USERNAME}/projects-1-frontend"
         VERSION = "${BUILD_NUMBER}"
-        PROMETHEUS_URL = "http://prometheus-server.monitoring:9090"
+        PROMETHEUS_URL = "http://localhost:32228"
     }
 
     stages {
