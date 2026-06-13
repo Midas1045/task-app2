@@ -12,7 +12,8 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 7. [Docker Installation and Image Creation](#docker-installation-and-image-creation)
 8. [Kubernetes Single Node Cluster](#kubernetes-single-node-cluster)
 9. [Monitoring using Prometheus and Grafana](#monitoring-using-prometheus-and-grafana)
-10. [Nginx Installation and Reverse Proxy Configuration](#nginx-installation-and-reverse-proxy-configuration) 
+10. [Nginx Installation and Reverse Proxy Configuration](#nginx-installation-and-reverse-proxy-configuration)
+11. [SSL Certificate](#ssl-certificate)
 
 ## Introduction
 This repository is a comprehensive, hands-on project designed to provide practical experience in full-stack development and modern DevOps workflows. This project integrates a dynamic frontend and robust backend, powered by automated CI/CD pipelines and Jenkins-driven build orchestration. Containerization is handled with Docker for consistent deployments, while Terraform manages the infrastructure to enable scalable, reproducible environments.
@@ -633,12 +634,12 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 			import http from 'k6/http';
 			
 			export const options = {
-			  vus: 50,
+			  vus: 100,
 			  duration: '30s',
 			};
 			
 			export default function () {
-			  http.get('http://44.200.219.76/');
+			  http.get('http://127.0.0.1/');
 			}
 			  
 			```
@@ -663,19 +664,130 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 		* Virtual user activity
 
 ## Nginx Installation and Reverse Proxy Configuration
-				
+
+ * Update System Packages
+
+    * Run command:
+      ```
+      sudo apt update
+
+      ```
+      This updates the system's package index so your server knows the latest available versions of software packages. It ensures you install the most recent and secure versions of tools like Nginx and its dependencies.
+
+* Install Nginx
+
+    * Run command:
+      ```
+      sudo apt install nginx -y
+
+      ```
+      This Installs the Nginx web server. The -y flag automatically confirms the installation without prompting.
+
+* Enable and Start Nginx
+
+    * Run command:
+      ```
+      sudo systemctl enable --now nginx
+
+      ```
+      This enables Nginx to start automatically on boot and starts it immediately in a single command.
+
+* Create the Nginx Reverse Proxy Configuration
+
+    * Run command:
+      ```
+      sudo tee /etc/nginx/sites-available/mysite > /dev/null <<EOF
+
+	  server {
+		  listen 80;
+		  server_name obiclint.space;
+		   
+		  location / {
+		        proxy_pass http://localhost:3000;
+		        proxy_http_version 1.1;
+		        proxy_set_header Host              $host;
+		        proxy_set_header X-Real-IP         $remote_addr;
+		        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+		        proxy_set_header X-Forwarded-Proto $scheme;
+		    }
+		}
+		EOF
+		
+		```
+        This creates the Nginx configuration file using tee with a heredoc. This sets up Nginx as a reverse proxy — it listens on port 80 and forwards all incoming traffic to the application running inside the Docker container on port 3000.
+
+ * Remove the Default Nginx Site
+
+     * Run Command:
+
+	   ```
+       sudo rm -f /etc/nginx/sites-enabled/default
+
+       ```
+       This removes the default Nginx site that ships with the installation. The default config also listens on port 80 and would conflict with your custom configuration, causing traffic to be routed incorrectly.
+
+ * Enable the Site
+
+      * Run Command:
+
+		```
+        sudo ln -s /etc/nginx/sites-available/mysite /etc/nginx/sites-enabled/
+
+        ```
+        This creates a symbolic link from sites-available to sites-enabled. Nginx only serves configurations that are symlinked into sites-enabled — this is how you activate a site without deleting the config file.
+
+  * Test the Nginx Configuration
+
+	   * Run Command:
+
+	   ```
+       sudo nginx -t
+
+       ```
+       This validates the Nginx configuration file for syntax errors before applying it. Always run this before reloading to avoid taking down the server with a broken config.
 
 
+   * Reload Nginx
 
+	   * Run command:
 
+	   ```
+       sudo systemctl reload nginx
 
-     
+       ```
+       This applies the new configuration by gracefully reloading Nginx without dropping active connections. Unlike a full restart, reload keeps existing connections alive while picking up the new config.
 
+	 
 
+## SSL CERTIFICATE
 
+SSL is issued by Let's Encrypt via Certbot.  It establishes an encrypted HTTPS connection between the client and the server, protecting data in transit from interception, tampering, and man-in-the-middle attacks.
 
+   * Install Certbot and the Nginx Plugin
 
+	    * Run Command:
 
+		```
+        sudo apt install certbot python3-certbot-nginx -y
+
+        ```
+        This Installs Certbot, which is a tool that automatically obtains and manages SSL/TLS certificates from Let's Encrypt. The python3-certbot-nginx plugin allows Certbot to directly read and modify your Nginx configuration, automating the entire HTTPS setup process. The -y flag             confirms the installation without prompting.
+
+  * Obtain and Install the SSL Certificate
+
+	   * Run Command:
+
+		   ```
+           sudo certbot --nginx -d obiclint.space
+
+	       ```
+
+           This contacts the Let's Encrypt certificate authority, verifies domain ownership, issues a free SSL certificate for obiclint.space, and automatically updates the Nginx configuration to enable HTTPS. Certbot handles everything including:
+
+			* Adding the listen 443 ssl block to your Nginx config
+			* Setting the certificate and private key paths
+			* Adding an HTTP → HTTPS redirect so all traffic on port 80 is automatically forwarded to port 443
+			* Scheduling automatic certificate renewal before expiry
 
 
 
