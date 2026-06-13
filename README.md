@@ -765,7 +765,7 @@ Action: Point your domain to the server's public IP address by creating an A Rec
 ```
 Type:  A
 Name:  @
-Value: 100.54.38.159
+Value: 100.54.##.###
 TTL:   Auto
 
 ```
