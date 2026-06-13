@@ -8,7 +8,7 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 3. [GITHUB ACCOUNT CREATION](#github-account-creation)
 4. [STATIC WEB APP CONFIGURATION](#static-web-app-configuration)
 5. [GITHUB ACTIONS](#github-actions)
-6. [JENKINS SETUO AND AUTOMATION](#jenkins-setup-and-automation)
+6. [JENKINS SETUP AND AUTOMATION](#jenkins-setup-and-automation)
 7. [DOCKER INSTALLATION AND IMAGE CREATION](#docker-installation-and-image-creation)
 8. [KUBERNETES SINGLE NODE CLUSTER](#kubernetes-single-node-cluster)
 9. [MONITORING USING PROMETHEUS AND GRAFANA](#monitoring-using-prometheus-and-grafana)
@@ -39,7 +39,7 @@ This serves as a cloud-based datacenter where all repositories are stored.
 * On the dashboard, navigate to ‘+’ sign and select ‘New Repository’. 
 * On the next page, fill in the repository name and adjust the configuration settings to what is needed. Then select ‘Create Repository’
 
-## Static Web App configuration
+## STATIC WEB APP CONFIGURATION
 
 * Nodejs installation
   * Download nodejs from official website 
@@ -72,7 +72,7 @@ This serves as a cloud-based datacenter where all repositories are stored.
 <p align="center"> <img width="900" height="698" alt="Screenshot 2026-03-22 223916" src="https://github.com/user-attachments/assets/44e0a59f-8cf6-4bbe-8781-116331acd8a2" />
 
 
-## Github Actions
+## GITHUB ACTIONS
 * Git Initialization
 
   Git is a distributed version control. It is used to track changes made in a project repository. 
@@ -108,7 +108,7 @@ This serves as a cloud-based datacenter where all repositories are stored.
   * Run `git commit -m “workflows file commit”`- Saves the new file changes with a message describing the actions taken
   * Run `git push`- This uploads the commit to the repository. 
 
-## Jenkins Setup and Automation
+## JENKINS SETUP AND AUTOMATION
 1. Create a VPC and launch an EC2 instance on AWS. Ensure the AMI used is Ubuntu. Set the inbound rules for security groups and NACLS to the following: 
    * SSH - Port 22
    * HTTP- Port 80
@@ -174,7 +174,7 @@ This feature on Github lets you link your repository to Jenkins and allows you t
 <p align="center"> <img width="900" height="715" alt="Screenshot 2026-04-04 192328" src="https://github.com/user-attachments/assets/36e865b3-5ad7-48f7-a3e5-d6a21c9f8602" />
 
 
-## Docker Installation and Image Creation
+## DOCKER INSTALLATION AND IMAGE CREATION
 Docker is a tool that packages your application and everything it needs to run — code, dependencies, libraries, settings — into a single unit called a container.
 
 Key Concepts include: 
@@ -245,7 +245,7 @@ To view/confirm that the docker image exists, run docker images. This displays d
 
 <p align="center"> <img width="1159" height="684" alt="Screenshot 2026-05-05 141325" src="https://github.com/user-attachments/assets/a7fb5838-a718-4f98-90eb-13d34c5d5e64" />
 
-## Kubernetes Single Node Cluster
+## KUBERNETES SINGLE NODE CLUSTER
 1. Pre- Kubernetes Setup
 
 	* Before running commands for installation, ensure you have enough space on your instance type of your virtual machine. Jenkins previously installed consumes 	  a lot of space and as such might pose an issue for setting up kubernetes. The workaround to this is to increase the storage capacity of the existing 			  instance type without having to delete or repurpose another one. Ideally anything 30GB and above should suffice.
@@ -369,7 +369,7 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 	 * After the service restarts, reconnect to OpenLens using the updated kubeconfig file. The cluster should now authenticate successfully using the server’s 	   public IP address instead of the default localhost endpoint
 	 * The OpenLens dashboard should now be fully connected and live, allowing you to monitor the Kubernetes cluster in real time, including node status, 			   workload, pods, deployments, namespaces, events, and resource metrics such as CPU and memory usage.
   
-  ## Monitoring using Prometheus And Grafana
+  ## MONITORING USING PROMETHEUS AND GRAFANA
 
   1. Update System Packages
       
@@ -664,7 +664,7 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
 		* Throughput
 		* Virtual user activity
 
-## Nginx Installation and Reverse Proxy Configuration
+## NGINX INSTALLATION AND REVERSE PROXY CONFIGURATION
 
  * Update System Packages
 
