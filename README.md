@@ -13,12 +13,13 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 8. [Kubernetes Single Node Cluster](#kubernetes-single-node-cluster)
 9. [Monitoring using Prometheus and Grafana](#monitoring-using-prometheus-and-grafana)
 10. [Nginx Installation and Reverse Proxy Configuration](#nginx-installation-and-reverse-proxy-configuration)
-11. [SSL Certificate](#ssl-certificate)
+11. [CONFIGURE DOMAIN DNS](#configure-domain-dns)
+12. [SSL Certificate](#ssl-certificate)
 
 ## INTRODUCTION
 This repository is a comprehensive, hands-on project designed to provide practical experience in full-stack development and modern DevOps workflows. This project integrates a dynamic frontend and robust backend, powered by automated CI/CD pipelines and Jenkins-driven build orchestration. Containerization is handled with Docker for consistent deployments, while Terraform manages the infrastructure to enable scalable, reproducible environments.
 
-## Prerequisites and services used
+## PREREQUISITES AND SERVICES USED
 * Local Working Directory with Frontend and Backend features.
 * Access to AWS Console Dashboard
 * An Active Subscription (Free/Paid Tier)
@@ -757,7 +758,7 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
        ```
        This applies the new configuration by gracefully reloading Nginx without dropping active connections. Unlike a full restart, reload keeps existing connections alive while picking up the new config.
 
-## Configure Domain DNS	 
+## CONFIGURE DOMAIN DNS	 
 
 Action: Point your domain to the server's public IP address by creating an A Record in your domain registrar's DNS settings
 
