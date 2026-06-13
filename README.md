@@ -1,5 +1,5 @@
 # LAB STATIC WEB-APP DEVOPS DOCUMENTATION
-The Lab Web-App is a comprehensive lab project that combines frontend and backend development with modern DevOps workflows. It showcases CI/CD automation, Jenkins pipeline orchestration, containerized deployments with Docker, and infrastructure provisioning with Terraform.
+The Lab Web-App is a comprehensive lab project that combines frontend and backend development with modern DevOps workflows. It showcases CI/CD automation, Jenkins pipeline orchestration, containerized deployments with Docker, infrastructure provisioning with Terraform, and production-grade deployment on AWS EC2 with Nginx reverse proxy, SSL/TLS encryption via Let's Encrypt, and live monitoring using Prometheus and Grafana.
 
 
 ## Table of Contents
