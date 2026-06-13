@@ -6,15 +6,15 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 1. [INTRODUCTION](#introduction)
 2. [PREREQUISITES AND SERVICES USED](#prerequisites-and-services-used)
 3. [GITHUB ACCOUNT CREATION](#github-account-creation)
-4. [Static Web App configuration](#static-web-app-configuration)
-5. [Github Actions](#github-actions)
-6. [Jenkins Setup and Automation](#jenkins-setup-and-automation)
-7. [Docker Installation and Image Creation](#docker-installation-and-image-creation)
-8. [Kubernetes Single Node Cluster](#kubernetes-single-node-cluster)
-9. [Monitoring using Prometheus and Grafana](#monitoring-using-prometheus-and-grafana)
-10. [Nginx Installation and Reverse Proxy Configuration](#nginx-installation-and-reverse-proxy-configuration)
+4. [STATIC WEB APP CONFIGURATION](#static-web-app-configuration)
+5. [GITHUB ACTIONS](#github-actions)
+6. [JENKINS SETUO AND AUTOMATION](#jenkins-setup-and-automation)
+7. [DOCKER INSTALLATION AND IMAGE CREATION](#docker-installation-and-image-creation)
+8. [KUBERNETES SINGLE NODE CLUSTER](#kubernetes-single-node-cluster)
+9. [MONITORING USING PROMETHEUS AND GRAFANA](#monitoring-using-prometheus-and-grafana)
+10. [NGINX INSTALLATION AND REVERSE PROXY CONFIGURATION](#nginx-installation-and-reverse-proxy-configuration)
 11. [CONFIGURE DOMAIN DNS](#configure-domain-dns)
-12. [SSL Certificate](#ssl-certificate)
+12. [SSL CERTIFICATE](#ssl-certificate)
 
 ## INTRODUCTION
 This repository is a comprehensive, hands-on project designed to provide practical experience in full-stack development and modern DevOps workflows. This project integrates a dynamic frontend and robust backend, powered by automated CI/CD pipelines and Jenkins-driven build orchestration. Containerization is handled with Docker for consistent deployments, while Terraform manages the infrastructure to enable scalable, reproducible environments.
