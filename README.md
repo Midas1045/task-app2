@@ -3,9 +3,9 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 
 
 ## Table of Contents
-1. [Introduction](#Introduction)
-2. [Prerequisites and Services used](#prerequisites-and-services-used)
-3. [Github account creation](#github-account-creation)
+1. [INTRODUCTION](#introduction)
+2. [PREREQUISITES AND SERVICES USED](#prerequisites-and-services-used)
+3. [GITHUB ACCOUNT CREATION](#github-account-creation)
 4. [Static Web App configuration](#static-web-app-configuration)
 5. [Github Actions](#github-actions)
 6. [Jenkins Setup and Automation](#jenkins-setup-and-automation)
@@ -15,7 +15,7 @@ The Lab Web-App is a comprehensive lab project that combines frontend and backen
 10. [Nginx Installation and Reverse Proxy Configuration](#nginx-installation-and-reverse-proxy-configuration)
 11. [SSL Certificate](#ssl-certificate)
 
-## Introduction
+## INTRODUCTION
 This repository is a comprehensive, hands-on project designed to provide practical experience in full-stack development and modern DevOps workflows. This project integrates a dynamic frontend and robust backend, powered by automated CI/CD pipelines and Jenkins-driven build orchestration. Containerization is handled with Docker for consistent deployments, while Terraform manages the infrastructure to enable scalable, reproducible environments.
 
 ## Prerequisites and services used
@@ -30,7 +30,7 @@ This repository is a comprehensive, hands-on project designed to provide practic
 * Kubernetes
 * Prometheus and Grafana
 
-## Github account creation
+## GITHUB ACCOUNT CREATION
 
 This serves as a cloud-based datacenter where all repositories are stored.
 * Head to https://github.com and create an account.
@@ -757,7 +757,19 @@ The Jenkinsfile needs to be modified to handle the complete pipeline — buildin
        ```
        This applies the new configuration by gracefully reloading Nginx without dropping active connections. Unlike a full restart, reload keeps existing connections alive while picking up the new config.
 
-	 
+## Configure Domain DNS	 
+
+Action: Point your domain to the server's public IP address by creating an A Record in your domain registrar's DNS settings
+
+```
+Type:  A
+Name:  @
+Value: 100.54.38.159
+TTL:   Auto
+
+```
+
+This maps obiclint.space to the EC2 instance's public IP address, ensuring that when a browser requests obiclint.space, DNS resolves it to your server. Without this step, Certbot cannot verify domain ownership and SSL certificate issuance will fail.
 
 ## SSL CERTIFICATE
 
